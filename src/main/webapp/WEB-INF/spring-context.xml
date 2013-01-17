@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:int="http://www.springframework.org/schema/integration"
+  xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
+  xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-2.1.xsd
+		http://www.springframework.org/schema/integration/sns http://www.springframework.org/schema/integration/sns/spring-integration-sns-2.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+  <bean id="awsCredentialsProvider" class="com.threepillar.labs.si.aws.SimpleAWSCredentialsProvider">
+    <property name="accessKey" value="AKIAIVX775TRPPSZTEMQ" />
+    <property name="secretKey" value="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" />
+  </bean>
+
+  <int-sns:inbound-channel-adapter id="snsInboundAdapter"
+      topicName="snsInboundTopic"
+      channel="logInbound" 
+      http-endpoint-path="/aws/sns/inbound.do"
+      awsCredentialsProvider="awsCredentialsProvider">
+      
+    <int-sns:subscriptions>
+      <int-sns:subscription protocol="http" endpoint="http://61.8.133.217:9090/si-aws-sns-sample"/>
+    </int-sns:subscriptions>
+  </int-sns:inbound-channel-adapter>
+
+  <int:channel id="logInbound" />
+  
+  <int-stream:stdout-channel-adapter id="stdoutInbound" append-newline="true"
+      channel="logInbound" />
+      
+  <int-sns:publish-subscribe-channel id="snsChannel" 
+      topicName="snsChannelTopic"
+      awsCredentialsProvider="awsCredentialsProvider"
+      http-endpoint-path="/aws/sns/channel.do"
+      subscription-list="subscriptionsChannel">
+  
+    <int-sns:subscriptions>
+      <int-sns:subscription protocol="http" endpoint="http://61.8.133.217:9090/si-aws-sns-sample"/>
+    </int-sns:subscriptions>    
+  </int-sns:publish-subscribe-channel>
+
+  <int-stream:stdin-channel-adapter id="stdin" channel="snsChannel">
+    <int:poller fixed-rate="500" />
+  </int-stream:stdin-channel-adapter>
+  <int-stream:stdout-channel-adapter id="stdoutChannel1" channel="snsChannel" append-newline="true"/>
+  <int-stream:stdout-channel-adapter id="stdoutChannel2" channel="snsChannel" append-newline="true"/>
+
+</beans>
