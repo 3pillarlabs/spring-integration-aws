@@ -18,10 +18,10 @@
   </bean>
 
   <int-sns:inbound-channel-adapter id="snsInboundAdapter"
-      topicName="snsInboundTopic"
+      topic-name="snsInboundTopic"
       channel="logInbound" 
       http-endpoint-path="/aws/sns/inbound.do"
-      awsCredentialsProvider="awsCredentialsProvider">
+      aws-credentials-provider="awsCredentialsProvider">
       
     <int-sns:subscriptions>
       <int-sns:subscription protocol="http" endpoint="http://61.8.133.217:9090/si-aws-sns-sample"/>
@@ -34,10 +34,9 @@
       channel="logInbound" />
       
   <int-sns:publish-subscribe-channel id="snsChannel" 
-      topicName="snsChannelTopic"
-      awsCredentialsProvider="awsCredentialsProvider"
-      http-endpoint-path="/aws/sns/channel.do"
-      subscription-list="subscriptionsChannel">
+      topic-name="snsChannelTopic"
+      aws-credentials-provider="awsCredentialsProvider"
+      http-endpoint-path="/aws/sns/channel.do">
   
     <int-sns:subscriptions>
       <int-sns:subscription protocol="http" endpoint="http://61.8.133.217:9090/si-aws-sns-sample"/>
