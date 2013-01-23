@@ -60,14 +60,13 @@
   <bean id="snsChannelSubscriberB" 
       class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" />
 
-  <!-- <int-stream:stdout-channel-adapter id="stdoutChannel1" channel="snsChannel" append-newline="true"/>
-  <int-stream:stdout-channel-adapter id="stdoutChannel2" channel="snsChannel" append-newline="true"/> -->
-
-  <!-- SNS channel -> SNS outbound -> SQS -> SQS inbound -> stdout  -->
-  <!-- <int-sns:outbound-channel-adapter id="snsOutbound" 
+  <!-- SNS outbound -> SQS  -->
+  <int:channel id="logSnsOutbound" />
+  
+  <int-sns:outbound-channel-adapter id="snsOutbound" 
       topic-name="snsOutboundTopic" 
       aws-credentials-provider="awsCredentialsProvider"
-      channel="snsChannel">
+      channel="logSnsOutbound">
       
     <int-sns:subscriptions>
       <int-sns:subscription protocol="sqs" endpoint="sqsInbound"/>
@@ -80,7 +79,8 @@
       channel="logSqsInbound" />
       
   <int:channel id="logSqsInbound" />
-  <int-stream:stdout-channel-adapter id="stdoutChannel3" channel="logSqsInbound" append-newline="true"/> -->
   
+  <bean id="snsSqsMessageHandler" 
+      class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler" />
 
 </beans>
