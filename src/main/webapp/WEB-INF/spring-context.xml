@@ -42,7 +42,8 @@
   <int:channel id="logSnsInbound" />
 
   <bean id="snsInboundMessageHandler" 
-      class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" />
+      class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" 
+      scope="prototype" />
   
   <!-- SNS channel  -->
   <int-sns:publish-subscribe-channel id="snsChannel" 
@@ -56,9 +57,11 @@
   </int-sns:publish-subscribe-channel>
 
   <bean id="snsChannelSubscriberA" 
-      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" />
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler"
+      scope="prototype" />
   <bean id="snsChannelSubscriberB" 
-      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" />
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler"
+      scope="prototype" />
 
   <!-- SNS outbound -> SQS  -->
   <int:channel id="logSnsOutbound" />
@@ -81,6 +84,7 @@
   <int:channel id="logSqsInbound" />
   
   <bean id="snsSqsMessageHandler" 
-      class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler" />
+      class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler"
+      scope="prototype" />
 
 </beans>
