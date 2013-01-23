@@ -24,6 +24,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
       <groupId>com.threepillar.labs</groupId>
       <artifactId>spring-integration-aws</artifactId>
       <version>1.0.0-RELEASE</version>
@@ -37,6 +42,16 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.16</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-websocket</artifactId>
+      <version>8.1.8.v20121106</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.aggregate</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>8.1.8.v20121106</version>
     </dependency>
   </dependencies>
 
