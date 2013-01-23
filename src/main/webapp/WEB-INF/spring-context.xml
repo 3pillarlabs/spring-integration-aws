@@ -26,7 +26,7 @@
     <property name="secretKey" value="Nzy6w0iq8JI+DHgdiPPiuqixiMoWQmPhWFgQzOZY" />
   </bean>
 
-  <!-- SNS inbound -> stdout -->
+  <!-- SNS Inbound -->
   <int-sns:inbound-channel-adapter id="snsInboundAdapter"
       topic-name="snsInboundTopic"
       channel="logSnsInbound" 
@@ -38,32 +38,29 @@
       <int-sns:subscription protocol="http" endpoint="http://203.122.33.232:80/si-aws-sns-sample"/>
     </int-sns:subscriptions>
   </int-sns:inbound-channel-adapter>
-
-  <!-- <int-stream:stdin-channel-adapter id="stdin" channel="logSnsInbound">
-    <int:poller fixed-rate="500" />
-  </int-stream:stdin-channel-adapter> -->
   
   <int:channel id="logSnsInbound" />
 
   <bean id="snsInboundMessageHandler" 
       class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" />
   
-  <!-- stdin -> SNS channel -> stdout1 + stdout2  -->
-  <!-- <int-stream:stdin-channel-adapter id="stdin" channel="snsChannel">
-    <int:poller fixed-rate="500" />
-  </int-stream:stdin-channel-adapter>
-  
+  <!-- SNS channel  -->
   <int-sns:publish-subscribe-channel id="snsChannel" 
       topic-name="snsChannelTopic"
       aws-credentials-provider="awsCredentialsProvider"
       http-endpoint-path="/aws/sns/channel.do">
   
     <int-sns:subscriptions>
-      <int-sns:subscription protocol="http" endpoint="http://61.8.133.217:9090/si-aws-sns-sample"/>
+      <int-sns:subscription protocol="http" endpoint="http://203.122.33.232:80/si-aws-sns-sample"/>
     </int-sns:subscriptions>    
   </int-sns:publish-subscribe-channel>
 
-  <int-stream:stdout-channel-adapter id="stdoutChannel1" channel="snsChannel" append-newline="true"/>
+  <bean id="snsChannelSubscriberA" 
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" />
+  <bean id="snsChannelSubscriberB" 
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" />
+
+  <!-- <int-stream:stdout-channel-adapter id="stdoutChannel1" channel="snsChannel" append-newline="true"/>
   <int-stream:stdout-channel-adapter id="stdoutChannel2" channel="snsChannel" append-newline="true"/> -->
 
   <!-- SNS channel -> SNS outbound -> SQS -> SQS inbound -> stdout  -->
