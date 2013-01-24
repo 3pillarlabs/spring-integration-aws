@@ -153,18 +153,9 @@ text-decoration: none;
 
 em {font-style: italic;}
 
-blockquote, .testimonial {
+.testimonial {
 font-style: italic;
 overflow: hidden;
-}
-
-blockquote {
-padding-left: 15px;
-margin: 15px;
-font-family: "Palatino Linotype", Palatino, Georgia, serif;
-font-size: 18px;
-color: #777;
-border-left: 1px dotted #777;
 }
 
 .testimonial {
@@ -1703,6 +1694,8 @@ clear: both;
 overflow: hidden;
 zoom: 1;
 display: block;
+position: absolute;
+width: 100%;
 }
 
 .footer-widget-container {
@@ -1723,7 +1716,6 @@ font-size: 14px;
 }
 
 #site-info .copyright {
-float: left;
 max-width: 400px;
 }
 

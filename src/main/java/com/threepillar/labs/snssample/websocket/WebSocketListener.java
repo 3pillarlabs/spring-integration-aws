@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -19,9 +20,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.web.context.ServletContextAware;
 
 public class WebSocketListener implements InitializingBean, SmartLifecycle,
-		ApplicationContextAware {
+		ApplicationContextAware, ServletContextAware {
 
 	private final Log log = LogFactory.getLog(WebSocketListener.class);
 	private final Server server;
@@ -29,6 +31,7 @@ public class WebSocketListener implements InitializingBean, SmartLifecycle,
 	private String host;
 	private int port = 9090;
 	private ApplicationContext applicationContext;
+	private ServletContext servletContext;
 
 	public WebSocketListener() {
 		super();
@@ -49,6 +52,8 @@ public class WebSocketListener implements InitializingBean, SmartLifecycle,
 		if (host == null) {
 			host = "localhost";
 		}
+		servletContext.setAttribute("websocket.host", host);
+		servletContext.setAttribute("websocket.port", new Integer(port));
 	}
 
 	@Override
@@ -147,6 +152,11 @@ public class WebSocketListener implements InitializingBean, SmartLifecycle,
 	public void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		this.applicationContext = applicationContext;
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 
 }

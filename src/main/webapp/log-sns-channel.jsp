@@ -40,15 +40,31 @@
       <textarea rows="2" cols="20" id="serverMessageA" readonly="true"></textarea>
       <label for="serverMessageB">Subscriber B:</label>
       <textarea rows="2" cols="20" id="serverMessageB" readonly="true"></textarea>
+      <div class="row">
+        <div class="span3">
+          <div class="progress progress-success">
+            <div id="progressBar" class="bar" style="width: 1%"></div>
+          </div>
+          <br class="clear" />
+        </div>
+      </div>
     </section>
     <br class="clear"/>
     <script type="text/javascript">
     	jQuery(function($) {
-    		var webSocketA = new WebSocket("ws://localhost:9090/snsChannelSubscriberA");
-    		var webSocketB = new WebSocket("ws://localhost:9090/snsChannelSubscriberB");
+            var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
+            var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
+            var wsURLA = "ws://" + serverName + ":" + serverPort + "/snsChannelSubscriberA";
+            var wsURLB = "ws://" + serverName + ":" + serverPort + "/snsChannelSubscriberB";
+    		var webSocketA = new WebSocket(wsURLA);
+    		var webSocketB = new WebSocket(wsURLB);
     		webSocketA.onmessage = function(event) {
     			var messageText = event.data;
     			$("#serverMessageA").append(messageText + "\n");
+                $("#progressBar").css("width", "100%");
+                window.setTimeout(function() {
+                  $("#progressBar").css("width", "1%");
+                }, 999);
     		};
     		webSocketB.onmessage = function(event) {
     			var messageText = event.data;
@@ -61,6 +77,7 @@
     			if (message.length > 0) {
     				webSocketA.send(message);
     				inputArea.attr("value", "");
+    				$("#progressBar").css("width", "50%");
     			}
     		});
     	});

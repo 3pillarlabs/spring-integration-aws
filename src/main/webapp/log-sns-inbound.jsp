@@ -6,7 +6,6 @@
   </div>          
   <div class="portfolio-large" id="pc-portfolio">
   <c:url value="/snsInboundTopic.do" var="snsInboundTopicPath"/>
-  
   <section class="one-half">
     <blockquote>
       This example demonstrates how an SNS inbound adapter can be set up to
@@ -41,20 +40,36 @@
     <br/>
     <label for="serverMessage">SNS Inbound Message:</label>
     <textarea rows="2" cols="20" id="serverMessage" readonly="true"></textarea>
+    <div class="row">
+      <div class="span3">
+        <div class="progress progress-success">
+          <div id="progressBar" class="bar" style="width: 1%"></div>
+        </div>
+        <br class="clear" />
+      </div>
+    </div>
   </section>
   <br class="clear" />
   <script type="text/javascript">
     jQuery(function($) {
-      var webSocket = new WebSocket("ws://localhost:9090/snsInboundMessageHandler");
+   	  var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
+   	  var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
+   	  var wsURL = "ws://" + serverName + ":" + serverPort + "/snsInboundMessageHandler";
+      var webSocket = new WebSocket(wsURL);
       webSocket.onmessage = function(event) {
         var messageText = event.data;
         $("#serverMessage").append(messageText + "\n");
+        $("#progressBar").css("width", "100%");
+        window.setTimeout(function() {
+          $("#progressBar").css("width", "1%");
+        }, 999);
       };
       
       $("#postToSNS").click(function() {
         var inputArea = $("#clientMessage");
         var message = inputArea.attr("value");
         if (message.length > 0) {
+        	$("#progressBar").css("width", "25%");
           $.ajax("${snsInboundTopicPath}", {
             type: "POST",
             contentType: "text/plain",
@@ -63,6 +78,7 @@
             dataType: "text",
             success: function() {
               inputArea.attr("value", "");
+              $("#progressBar").css("width", "50%");
             }
           });
         }

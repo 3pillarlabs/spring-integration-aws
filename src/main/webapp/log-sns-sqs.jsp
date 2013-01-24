@@ -9,7 +9,7 @@
       This example demonstrates SNS-SQS communication. The SQS queue is setup as
       a SNS topic subscriber with appropriate permissions for the SNS topic to post
       to the queue. When you send your message to the SNS topic, it is relayed to the
-      SQS queue. This message is picked up by the SQS inbound handler is displayed
+      SQS queue. This message is picked up by the SQS inbound handler and displayed
       in the text area.  
       </blockquote>
       <pre><code>
@@ -45,23 +45,39 @@
       <br/>
       <label for="serverMessage">SQS Inbound Message:</label>
       <textarea rows="2" cols="20" id="serverMessage" readonly="true"></textarea>
+      <div class="row">
+        <div class="span3">
+          <div class="progress progress-success">
+            <div id="progressBar" class="bar" style="width: 1%"></div>
+          </div>
+          <br class="clear" />
+        </div>
+      </div>
     </section>
 
     <br class="clear" />
     <script type="text/javascript">
       jQuery(function($) {
-        var webSocket = new WebSocket("ws://localhost:9090/snsSqsMessageHandler");
+        var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
+        var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
+        var wsURL = "ws://" + serverName + ":" + serverPort + "/snsSqsMessageHandler";
+        var webSocket = new WebSocket(wsURL);
         webSocket.onmessage = function(event) {
           var messageText = event.data;
           $("#serverMessage").append(messageText + "\n");
+          $("#progressBar").css("width", "100%");
+          window.setTimeout(function() {
+        	  $("#progressBar").css("width", "1%");
+          }, 999);
         };
         
         $("#postToSNS").click(function() {
           var inputArea = $("#clientMessage");
           var message = inputArea.attr("value");
           if (message.length > 0) {
-                    webSocket.send(message);
-                    inputArea.attr("value", "");
+            webSocket.send(message);
+            inputArea.attr("value", "");
+            $("#progressBar").css("width", "50%");
           }
         });
       });

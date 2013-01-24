@@ -11,11 +11,10 @@
       <p class="lead">
       Demonstrating the capabilities of our Spring Integration AWS project... 
       </p>
-      <p class="text-info">Demos:</p>
       <ul>
-        <li><a href="log-sns-inbound.jsp">SNS Inbound</a></li>
-        <li><a href="log-sns-channel.jsp">SNS Channel</a></li>
-        <li><a href="log-sns-sqs.jsp">SNS-SQS Inbound</a></li>
+        <li><i class="icon-flag"></i> <a href="log-sns-inbound.jsp"><strong>SNS Inbound</strong></a>: receive notifications from a SNS topic</li>
+        <li><i class="icon-flag"></i> <a href="log-sns-channel.jsp"><strong>SNS Channel</strong></a>: receive notifications from a SNS topic and relay to multiple subscribers</li>
+        <li><i class="icon-flag"></i> <a href="log-sns-sqs.jsp"><strong>SNS-SQS Inbound</strong></a>: push notifications from SNS topic to SQS queue and receive queued messages</li>
       </ul>
     </div>
     <br class="clear"/>
