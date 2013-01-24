@@ -66,6 +66,13 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <!-- <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <warName>spring-integration-aws-demo</warName>
+        </configuration>
+      </plugin> -->
     </plugins>
   </build>
 </project>

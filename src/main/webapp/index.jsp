@@ -5,7 +5,12 @@
   </div>          
   <div class="portfolio-large" id="pc-portfolio">
     <div class="one-half">
-      <img class="new-ribbon new-ribbon-173 featured-image featured-image-173 pf-post-image" src="http://labs.3pillarglobal.com/wp-content/uploads/2012/12/bolt-featured.png">          
+      <img class="new-ribbon new-ribbon-173 featured-image featured-image-173 pf-post-image" src="http://labs.3pillarglobal.com/wp-content/uploads/2012/12/bolt-featured.png">
+      <div id="webSocketAlert" class="alert alert-error alert-block hide">
+        <h4>No WebSocket!</h4>
+        Looks like the WebSocket API is not available in your browser. Please use a compatible browser
+        like <strong>Safari</strong>, <strong>Firefox</strong> or <strong>Chrome</strong> to view these demos. 
+      </div>                
     </div>
     <div class="one-half">
       <p class="lead">
@@ -20,4 +25,11 @@
     <br class="clear"/>
   </div>
 </div>
+<script>
+	jQuery(function($) {
+		if (!("WebSocket" in window)) {
+			$("#webSocketAlert").removeClass("hide");
+		}
+	});
+</script>
 <%@include file="WEB-INF/partials/afterContent.jsp" %>

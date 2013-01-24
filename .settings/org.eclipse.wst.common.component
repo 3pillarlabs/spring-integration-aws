@@ -7,7 +7,7 @@
         <dependent-module archiveName="spring-integration-aws-1.0.0-RELEASE.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/spring-integration-aws/spring-integration-aws">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="si-aws-sns-sample"/>
         <property name="java-output-path" value="/si-aws-sns-sample/target/classes"/>
+        <property name="context-root" value="si-aws-sns-sample"/>
     </wb-module>
 </project-modules>

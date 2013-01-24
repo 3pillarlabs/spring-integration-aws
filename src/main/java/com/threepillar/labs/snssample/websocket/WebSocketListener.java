@@ -25,13 +25,17 @@ import org.springframework.web.context.ServletContextAware;
 public class WebSocketListener implements InitializingBean, SmartLifecycle,
 		ApplicationContextAware, ServletContextAware {
 
+	private static final String DEFAULT_LISTEN_ADDRESS = "localhost";
+	private static final int DEFAULT_LISTEN_PORT = 9090;
 	private final Log log = LogFactory.getLog(WebSocketListener.class);
 	private final Server server;
 	private final ExecutorService serverThread;
-	private String host;
-	private int port = 9090;
+	private String listenAddress = DEFAULT_LISTEN_ADDRESS;
+	private int listenPort = DEFAULT_LISTEN_PORT;
 	private ApplicationContext applicationContext;
 	private ServletContext servletContext;
+	private String webSocketHost = DEFAULT_LISTEN_ADDRESS;
+	private int webSocketPort = DEFAULT_LISTEN_PORT;
 
 	public WebSocketListener() {
 		super();
@@ -39,29 +43,59 @@ public class WebSocketListener implements InitializingBean, SmartLifecycle,
 		server = new Server();
 	}
 
-	public void setHost(String host) {
-		this.host = host;
+	/**
+	 * Set the address to start the listener on, default
+	 * {@value #DEFAULT_LISTEN_ADDRESS}
+	 * 
+	 * @param listenAddress
+	 */
+	public void setListenAddress(String listenAddress) {
+		this.listenAddress = listenAddress;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
+	/**
+	 * Set the port to start the listener on, default
+	 * {@value #DEFAULT_LISTEN_PORT}
+	 * 
+	 * @param listenPort
+	 */
+	public void setListenPort(int listenPort) {
+		this.listenPort = listenPort;
+	}
+
+	/**
+	 * Set the WebSocket address as accessed by client applications, default
+	 * {@value #DEFAULT_LISTEN_ADDRESS}.
+	 * 
+	 * @param webSocketHost
+	 */
+	public void setWebSocketHost(String webSocketHost) {
+		this.webSocketHost = webSocketHost;
+	}
+
+	/**
+	 * Set the WebSocket port as accessed by client applications, default
+	 * {@value #DEFAULT_LISTEN_PORT}
+	 * 
+	 * @param webSocketPort
+	 */
+	public void setWebSocketPort(int webSocketPort) {
+		this.webSocketPort = webSocketPort;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (host == null) {
-			host = "localhost";
-		}
-		servletContext.setAttribute("websocket.host", host);
-		servletContext.setAttribute("websocket.port", new Integer(port));
+		servletContext.setAttribute("websocket.host", webSocketHost);
+		servletContext.setAttribute("websocket.port",
+				new Integer(webSocketPort));
 	}
 
 	@Override
 	public void start() {
 
 		SelectChannelConnector wsConnector = new SelectChannelConnector();
-		wsConnector.setHost(host);
-		wsConnector.setPort(port);
+		wsConnector.setHost(listenAddress);
+		wsConnector.setPort(listenPort);
 		wsConnector.setName("webSocket");
 		wsConnector.setThreadPool(new QueuedThreadPool(10));
 		server.setConnectors(new Connector[] { wsConnector });
