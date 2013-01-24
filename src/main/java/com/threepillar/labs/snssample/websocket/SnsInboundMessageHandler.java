@@ -10,8 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessagingException;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageHandler;
+import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.util.Assert;
 
 public class SnsInboundMessageHandler implements MessageHandler,
@@ -20,7 +20,7 @@ public class SnsInboundMessageHandler implements MessageHandler,
 	private final Log log = LogFactory.getLog(SnsInboundMessageHandler.class);
 
 	private ApplicationContext applicationContext;
-	private DirectChannel logSnsInbound;
+	private SubscribableChannel logSnsInbound;
 	private Connection connection;
 
 	@Override
@@ -41,7 +41,7 @@ public class SnsInboundMessageHandler implements MessageHandler,
 	@Override
 	public void start() {
 		logSnsInbound = applicationContext.getBean("logSnsInbound",
-				DirectChannel.class);
+				SubscribableChannel.class);
 		Assert.notNull(logSnsInbound, "'logSnsInbound' must not be null");
 		logSnsInbound.subscribe(this);
 	}

@@ -151,3 +151,16 @@ h1,h2,h3,h4 {
     <!-- #header-container -->
     <div id="container" class="singular-page">
       <div id="contentwrap" class="one-col">
+        <div id="webSocketAlert" class="alert alert-error alert-block hide">
+          <h4>No WebSocket!</h4>
+          Looks like the WebSocket API is not available in your browser. Please use a compatible browser
+          like <strong>Safari</strong>, <strong>Firefox</strong> or <strong>Chrome</strong> to view these demos. 
+        </div>                
+        <script>
+          jQuery(function($) {
+            if (!("WebSocket" in window)) {
+              $("#webSocketAlert").removeClass("hide");
+            }
+          });
+        </script>
+      

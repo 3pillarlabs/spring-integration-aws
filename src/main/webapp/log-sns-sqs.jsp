@@ -44,7 +44,7 @@
       <button id="postToSNS" class="btn">Post to SNS</button>
       <br/>
       <label for="serverMessage">SQS Inbound Message:</label>
-      <textarea rows="2" cols="20" id="serverMessage" readonly="true"></textarea>
+      <textarea rows="15" cols="20" id="serverMessage" readonly="true"></textarea>
       <div class="row">
         <div class="span3">
           <div class="progress progress-success">
@@ -58,6 +58,7 @@
     <br class="clear" />
     <script type="text/javascript">
       jQuery(function($) {
+    	  if ("WebSocket" in window) {
         var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
         var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
         var wsURL = "ws://" + serverName + ":" + serverPort + "/snsSqsMessageHandler";
@@ -80,6 +81,9 @@
             $("#progressBar").css("width", "50%");
           }
         });
+    	  } else {
+    		  $("#postToSNS").attr("disabled", true);
+    	  }
       });
       
     </script>

@@ -11,8 +11,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageChannel;
 import org.springframework.integration.MessagingException;
-import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageHandler;
+import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
 
@@ -23,7 +23,7 @@ public class SnsSqsMessageHandler implements WebsocketHandler, MessageHandler,
 
 	private ApplicationContext applicationContext;
 	private MessageChannel logSnsOutbound;
-	private DirectChannel logSqsInbound;
+	private SubscribableChannel logSqsInbound;
 	private Connection connection;
 
 	@Override
@@ -54,7 +54,7 @@ public class SnsSqsMessageHandler implements WebsocketHandler, MessageHandler,
 				MessageChannel.class);
 		Assert.notNull(logSnsOutbound, "'logSnsOutbound' must not be null");
 		logSqsInbound = applicationContext.getBean("logSqsInbound",
-				DirectChannel.class);
+				SubscribableChannel.class);
 		Assert.notNull(logSqsInbound, "'logSqsInbound' must not be null");
 		logSqsInbound.subscribe(this);
 	}

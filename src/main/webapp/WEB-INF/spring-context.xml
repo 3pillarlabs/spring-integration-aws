@@ -42,7 +42,7 @@
     </int-sns:subscriptions>
   </int-sns:inbound-channel-adapter>
   
-  <int:channel id="logSnsInbound" />
+  <int:publish-subscribe-channel id="logSnsInbound" />
 
   <bean id="snsInboundMessageHandler" 
       class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" 
@@ -84,7 +84,7 @@
       aws-credentials-provider="awsCredentialsProvider"
       channel="logSqsInbound" />
       
-  <int:channel id="logSqsInbound" />
+  <int:publish-subscribe-channel id="logSqsInbound" />
   
   <bean id="snsSqsMessageHandler" 
       class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler"

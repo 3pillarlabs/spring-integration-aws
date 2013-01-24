@@ -36,10 +36,15 @@
       <textarea rows="2" cols="20" id="clientMessage" autofocus="autofocus"></textarea>
       <button id="postToSNS" class="btn">Post to SNS</button>
       <br/>
-      <label for="serverMessageA">Subscriber A:</label>
-      <textarea rows="2" cols="20" id="serverMessageA" readonly="true"></textarea>
-      <label for="serverMessageB">Subscriber B:</label>
-      <textarea rows="2" cols="20" id="serverMessageB" readonly="true"></textarea>
+      <section class="one-half">
+        <label for="serverMessageA">Subscriber A:</label>
+        <textarea rows="15" cols="20" id="serverMessageA" readonly="true"></textarea>
+      </section>
+      <section class="one-half">
+        <label for="serverMessageB">Subscriber B:</label>
+        <textarea rows="15" cols="20" id="serverMessageB" readonly="true"></textarea>
+      </section>
+      <br class="clearfix" />
       <div class="row">
         <div class="span3">
           <div class="progress progress-success">
@@ -52,6 +57,7 @@
     <br class="clear"/>
     <script type="text/javascript">
     	jQuery(function($) {
+    		if ("WebSocket" in window) {
             var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
             var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
             var wsURLA = "ws://" + serverName + ":" + serverPort + "/snsChannelSubscriberA";
@@ -80,6 +86,9 @@
     				$("#progressBar").css("width", "50%");
     			}
     		});
+    		} else {
+    			$("#postToSNS").attr("disabled", true);
+    		}
     	});
     	
     </script>

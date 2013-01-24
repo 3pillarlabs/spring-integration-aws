@@ -39,7 +39,7 @@
     <button id="postToSNS" class="btn btn-default">Post to SNS</button>
     <br/>
     <label for="serverMessage">SNS Inbound Message:</label>
-    <textarea rows="2" cols="20" id="serverMessage" readonly="true"></textarea>
+    <textarea rows="15" cols="20" id="serverMessage" readonly="true"></textarea>
     <div class="row">
       <div class="span3">
         <div class="progress progress-success">
@@ -52,37 +52,41 @@
   <br class="clear" />
   <script type="text/javascript">
     jQuery(function($) {
-   	  var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
-   	  var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
-   	  var wsURL = "ws://" + serverName + ":" + serverPort + "/snsInboundMessageHandler";
-      var webSocket = new WebSocket(wsURL);
-      webSocket.onmessage = function(event) {
-        var messageText = event.data;
-        $("#serverMessage").append(messageText + "\n");
-        $("#progressBar").css("width", "100%");
-        window.setTimeout(function() {
-          $("#progressBar").css("width", "1%");
-        }, 999);
-      };
+	  if ("WebSocket" in window) {	
+     	  var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
+     	  var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
+     	  var wsURL = "ws://" + serverName + ":" + serverPort + "/snsInboundMessageHandler";
+          var webSocket = new WebSocket(wsURL);
+          webSocket.onmessage = function(event) {
+              var messageText = event.data;
+              $("#serverMessage").append(messageText + "\n");
+              $("#progressBar").css("width", "100%");
+              window.setTimeout(function() {
+                $("#progressBar").css("width", "1%");
+              }, 999);
+          };
       
-      $("#postToSNS").click(function() {
-        var inputArea = $("#clientMessage");
-        var message = inputArea.attr("value");
-        if (message.length > 0) {
-        	$("#progressBar").css("width", "25%");
-          $.ajax("${snsInboundTopicPath}", {
-            type: "POST",
-            contentType: "text/plain",
-            data: message,
-            processData: false,
-            dataType: "text",
-            success: function() {
-              inputArea.attr("value", "");
-              $("#progressBar").css("width", "50%");
+          $("#postToSNS").click(function() {
+              var inputArea = $("#clientMessage");
+              var message = inputArea.attr("value");
+              if (message.length > 0) {
+              	$("#progressBar").css("width", "25%");
+                $.ajax("${snsInboundTopicPath}", {
+                  type: "POST",
+                  contentType: "text/plain",
+                  data: message,
+                  processData: false,
+                  dataType: "text",
+                  success: function() {
+                    inputArea.attr("value", "");
+                    $("#progressBar").css("width", "50%");
+                  }
+                });
             }
-          });
-        }
-      });
+	      });
+	  } else {
+		  $("#postToSNS").attr("disabled", true);
+	  }
     });
   </script>
   </div>
