@@ -76,6 +76,10 @@
     			var messageText = event.data;
     			$("#serverMessageB").append(messageText + "\n");
     		};
+            webSocketB.onclose = function() {
+          	  $("#postToSNS").attr("disabled", true);
+          	  $("label[for=clientMessage]").prepend('<div class="alert"><strong>Connection Lost</strong>: please refresh page</div>');
+            };
     		
     		$("#postToSNS").click(function() {
     			var inputArea = $("#clientMessage");
