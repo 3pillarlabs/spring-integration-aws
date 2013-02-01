@@ -21,7 +21,8 @@
 
   <bean class="com.threepillar.labs.snssample.websocket.WebSocketListener">
     <property name="listenAddress" value="0.0.0.0" />
-    <property name="webSocketHost" value="vmtuxbox" />
+	<property name="listenPort" value="11000" />
+    <property name="webSocketHost" value="61.8.133.220" />
   </bean>
 
   <bean id="awsCredentialsProvider" class="com.threepillar.labs.si.aws.SimpleAWSCredentialsProvider">
@@ -38,7 +39,7 @@
       sns-executor-proxy="snsInboundAdapterProxy">
       
     <int-sns:subscriptions>
-      <int-sns:subscription protocol="http" endpoint="http://203.122.33.232:80/spring-integration-aws-demo"/>
+      <int-sns:subscription protocol="http" endpoint="http://labs.3pillarglobal.com/spring-integration-aws-demo"/>
     </int-sns:subscriptions>
   </int-sns:inbound-channel-adapter>
   
@@ -55,7 +56,7 @@
       http-endpoint-path="/aws/sns/channel.do">
   
     <int-sns:subscriptions>
-      <int-sns:subscription protocol="http" endpoint="http://203.122.33.232:80/spring-integration-aws-demo"/>
+      <int-sns:subscription protocol="http" endpoint="http://labs.3pillarglobal.com/spring-integration-aws-demo"/>
     </int-sns:subscriptions>    
   </int-sns:publish-subscribe-channel>
 
