@@ -22,7 +22,8 @@
   <bean class="com.threepillar.labs.snssample.websocket.WebSocketListener">
     <property name="listenAddress" value="0.0.0.0" />
 	<property name="listenPort" value="11000" />
-    <property name="webSocketHost" value="61.8.133.220" />
+    <property name="webSocketHost" value="labs.3pillarglobal.com" />
+    <property name="webSocketPort" value="9090" />
   </bean>
 
   <bean id="awsCredentialsProvider" class="com.threepillar.labs.si.aws.SimpleAWSCredentialsProvider">
