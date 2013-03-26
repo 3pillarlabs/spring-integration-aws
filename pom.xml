@@ -10,6 +10,10 @@
   <name>si-aws-sns-sample</name>
   <url>http://maven.apache.org</url>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -78,9 +82,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.4.2</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
         <executions>
           <execution>
             <id>copy-resources</id>
