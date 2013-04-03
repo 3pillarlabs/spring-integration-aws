@@ -1,0 +1,2 @@
+http\://www.springframework.org/schema/integration/sns=com.threepillar.labs.si.sns.config.SnsNamespaceHandler
+http\://www.springframework.org/schema/integration/sqs=com.threepillar.labs.si.sqs.config.SqsNamespaceHandler

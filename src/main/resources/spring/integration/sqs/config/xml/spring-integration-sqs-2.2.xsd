@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.springframework.org/schema/integration/sqs"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:tool="http://www.springframework.org/schema/tool"
+  xmlns:integration="http://www.springframework.org/schema/integration"
+  targetNamespace="http://www.springframework.org/schema/integration/sqs"
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xsd:import namespace="http://www.springframework.org/schema/beans" />
+  <xsd:import namespace="http://www.springframework.org/schema/tool" />
+  <xsd:import namespace="http://www.springframework.org/schema/integration"
+    schemaLocation="http://www.springframework.org/schema/integration/spring-integration-2.1.xsd" />
+
+  <xsd:annotation>
+    <xsd:documentation><![CDATA[
+			Defines the configuration elements for the Spring Integration
+			SQS Adapter.
+		]]></xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="inbound-channel-adapter">
+    <xsd:annotation>
+      <xsd:documentation>
+        The definition for the Spring Integration SQS
+        Inbound Channel Adapter.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="integration:poller" minOccurs="0"
+          maxOccurs="1" />
+      </xsd:sequence>
+      <xsd:attributeGroup ref="coreSqsComponentAttributes" />
+      <xsd:attribute name="channel" type="xsd:string">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <tool:annotation kind="ref">
+              <tool:expected-type
+                type="org.springframework.integration.core.MessageChannel" />
+            </tool:annotation>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="send-timeout" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation><![CDATA[
+  			Allows you to specify how long this inbound-channel-adapter
+  			will wait for the message (containing the retrieved entities)
+  			to be sent successfully to the message channel, before throwing
+  			an exception.
+  
+  			Keep in mind that when sending to a DirectChannel, the
+  			invocation will occur in the sender's thread so the failing
+  			of the send operation may be caused by other components
+  			further downstream. By default the Inbound Channel Adapter
+  			will wait indefinitely. The value is specified in milliseconds.
+    		]]>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="receive-message-wait-timeout">
+        <xsd:annotation>
+          <xsd:documentation>
+            Long poll support (integer from 1 to 20). Specifies the duration, in seconds, that the 
+            ReceiveMessage action call will wait until a message is in the queue to include in the 
+            response, as opposed to returning an empty response if a message is not yet available 
+            to return. The default of short poll support occurs when this attribute is not configured 
+            or is configured with a value of 0. 
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0" />
+            <xsd:maxInclusive value="20" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="concurrent-consumers" type="xsd:int">
+        <xsd:annotation>
+          <xsd:documentation>
+            Number of concurrent message consumers, the consumers are maintained
+            in a fixed thread pool. By default, there is a single consumer thread,
+            while message dispatcher threads are created as required and managed in 
+            a cached thread pool.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="phase" type="xsd:int">
+        <xsd:annotation>
+          <xsd:documentation>
+            Bean start phase of SmartLifeCycle support.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="worker-shutdown-timeout" type="xsd:int">
+        <xsd:annotation>
+          <xsd:documentation>
+            Seconds to wait for concurrent consumer threads to finish, default 60.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="outbound-channel-adapter">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines an outbound Channel Adapter.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="integration:poller" minOccurs="0"
+          maxOccurs="1" />
+      </xsd:sequence>
+      <xsd:attributeGroup ref="coreSqsComponentAttributes" />
+      <xsd:attribute name="channel" type="xsd:string">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <xsd:documentation>
+              Channel from which messages will be output.When a message is sent 
+              to this channel it will be published to SQS.
+            </xsd:documentation>
+            <tool:annotation kind="ref">
+              <tool:expected-type
+                type="org.springframework.integration.MessageChannel" />
+            </tool:annotation>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="order">
+        <xsd:annotation>
+          <xsd:documentation>
+            Specifies the order for invocation when this endpoint is connected as a
+            subscriber to a SubscribableChannel.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="outbound-gateway">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines the Spring Integration Sqs Outbound Gateway
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="integration:poller" minOccurs="0"
+          maxOccurs="1" />
+      </xsd:sequence>
+      <xsd:attributeGroup ref="coreSqsComponentAttributes" />
+      <xsd:attribute name="request-channel" type="xsd:string"
+        use="required">
+        <xsd:annotation>
+          <xsd:documentation>
+            The receiving Message Channel of this endpoint.
+          </xsd:documentation>
+          <xsd:appinfo>
+            <tool:annotation kind="ref">
+              <tool:expected-type
+                type="org.springframework.integration.core.MessageChannel" />
+            </tool:annotation>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="reply-channel" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>
+            Message Channel to which replies should be
+            sent, after sending the message .
+          </xsd:documentation>
+          <xsd:appinfo>
+            <tool:annotation kind="ref">
+              <tool:expected-type
+                type="org.springframework.integration.core.MessageChannel" />
+            </tool:annotation>
+          </xsd:appinfo>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="reply-timeout" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation><![CDATA[
+			Allows you to specify how long this gateway will wait for
+			the reply message to be sent successfully before throwing
+			an exception. Keep in mind that when sending to a
+			DirectChannel, the invocation will occur in the sender's thread
+			so the failing of the send operation may be caused by other
+			components further downstream. By default the Gateway will
+			wait indefinitely. The value is specified in milliseconds.
+			]]>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="order">
+        <xsd:annotation>
+          <xsd:documentation>
+            Specifies the order for invocation when this endpoint is connected as a
+            subscriber to a SubscribableChannel.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="channel">
+    <xsd:annotation>
+      <xsd:documentation>
+  Creates a point-to-point channel that is backed by a SQS Queue.
+      </xsd:documentation>
+      <xsd:appinfo>
+        <tool:annotation>
+          <tool:exports type="org.springframework.integration.MessageChannel" />
+        </tool:annotation>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="interceptors" type="integration:channelInterceptorsType" minOccurs="0" maxOccurs="1">
+          <xsd:annotation>
+            <xsd:documentation><![CDATA[
+A list of ChannelInterceptor instances whose preSend and postSend methods
+will be applied to this channel. Note that the preReceive and postReceive
+methods have no effect for a SubscribableChannel instance.
+              ]]></xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="coreSqsComponentAttributes" />
+      <xsd:attribute name="message-driven" type="xsd:boolean">
+        <xsd:annotation>
+          <xsd:documentation>
+            Indicate whether this channel should be message-driven (subscribable) or not (pollable).
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="concurrent-consumers" type="xsd:int">
+        <xsd:annotation>
+          <xsd:documentation>
+            Number of concurrent message consumers, the consumers are maintained
+            in a fixed thread pool. By default, there is a single consumer thread,
+            while message dispatcher threads are created as required and managed in 
+            a cached thread pool.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="phase" type="xsd:int">
+        <xsd:annotation>
+          <xsd:documentation>
+            Bean start phase of SmartLifeCycle support.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="datatype" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>
+            <![CDATA[
+    Allows you to identify this channel as Datatype channel and specify the type of the Message
+    payload this channel accepts (e.g., datatype="java.lang.String"). Datatype channel
+    is a channel that accepts messages cotaining payload of certain type.
+            ]]>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="worker-shutdown-timeout" type="xsd:int">
+        <xsd:annotation>
+          <xsd:documentation>
+            Seconds to wait for concurrent consumer threads to finish.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="receive-message-wait-timeout">
+        <xsd:annotation>
+          <xsd:documentation>
+            Long poll support (integer from 1 to 20). Specifies the duration, in seconds, that the 
+            ReceiveMessage action call will wait until a message is in the queue to include in the 
+            response, as opposed to returning an empty response if a message is not yet available 
+            to return. The default of short poll support occurs when this attribute is not configured 
+            or is configured with a value of 0. 
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="0" />
+            <xsd:maxInclusive value="20" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:attributeGroup name="coreSqsComponentAttributes">
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Identifies the underlying Spring bean definition, which is an
+          instance of either 'EventDrivenConsumer' or 'PollingConsumer',
+          depending on whether the component's input channel is a
+          'SubscribableChannel' or 'PollableChannel'.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="auto-startup" default="true" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Flag to indicate that the component should start automatically
+          on startup (default true).
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:union memberTypes="xsd:boolean xsd:string" />
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="queue-name" use="required" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Name of SQS queue. If this queue does not exist, it will be
+          created.
+          ]]>
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="queue" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Reference to a java.util.concurrent.BlockingQueue<String> bean; only useful for
+          mock testing.
+          ]]>
+        </xsd:documentation>
+        <xsd:appinfo>
+          <tool:annotation kind="ref">
+            <tool:assignable-to type="java.util.concurrent.BlockingQueue"/>
+          </tool:annotation>
+        </xsd:appinfo>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="aws-credentials-provider" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Reference to a com.amazonaws.auth.AWSCredentialsProvider bean, required if 
+          "queue" is not provided.
+          ]]>
+        </xsd:documentation>
+        <xsd:appinfo>
+          <tool:annotation kind="ref">
+            <tool:assignable-to
+              type="com.amazonaws.auth.AWSCredentialsProvider" />
+          </tool:annotation>
+        </xsd:appinfo>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="region-id" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          AWS regionId to use, default is us-east-1
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="sqs-executor-proxy" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          Bean name for an instance of com.threepillar.labs.si.sqs.SqsExecutorProxy which
+          will be auto-created. You can use this bean to query for generated SQS attributes
+          such as queue ARN and URL.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="prefetch-count">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        Maximum count of messages to prefetch from SQS, default value is 10, which is also the maximum.
+        ]]></xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minInclusive value="0" />
+          <xsd:maxInclusive value="10" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="message-delay">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        The time in seconds that the delivery of all messages in the queue will be delayed, default 0 (zero). 
+        ]]></xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minInclusive value="0" />
+          <xsd:maxInclusive value="900" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="maximum-message-size">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        The limit of how many bytes a message can contain before Amazon SQS rejects it, default 64KB. 
+        ]]></xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minInclusive value="1024" />
+          <xsd:maxInclusive value="65536" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="message-retention-period">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        The number of seconds Amazon SQS retains a message, default 4 days. 
+        ]]></xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minInclusive value="60" />
+          <xsd:maxInclusive value="1209600" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="visibility-timeout">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        The length of time, in seconds, that a message received from a queue will be invisible to other 
+        receiving components when they ask to receive messages, default 30 seconds. 
+        ]]></xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minInclusive value="0" />
+          <xsd:maxInclusive value="43200" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:attributeGroup>
+</xsd:schema>

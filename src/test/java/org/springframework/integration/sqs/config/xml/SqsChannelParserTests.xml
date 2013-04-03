@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:int="http://www.springframework.org/schema/integration"
+  xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
+  xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+  xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-2.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-2.2.xsd">
+
+  <bean id="testQueue" class="com.threepillar.labs.si.test.support.BlockingQueueFactory" 
+      factory-method="createBlockingQueue" />
+
+  <int-sqs:channel queue-name="testQueue" queue="testQueue" id="sqsChannel" sqs-executor-proxy="sqsExecutorProxy">
+    <int-sqs:interceptors>
+        <int:wire-tap channel="log"/>
+    </int-sqs:interceptors>      
+  </int-sqs:channel>
+  
+  <int:channel id="log" />
+
+  <int-stream:stdout-channel-adapter channel="sqsChannel" id="stdout" append-newline="true"/>
+
+</beans>
