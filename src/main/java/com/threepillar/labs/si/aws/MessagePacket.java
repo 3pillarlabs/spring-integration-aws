@@ -67,8 +67,12 @@ public class MessagePacket {
 					this.payload = mapper.readValue(content, payloadClass);
 				}
 
-				properties = jsonObject.getJSONObject(PROPERTIES_KEY);
-				headers = jsonObject.getJSONObject(HEADERS_KEY);
+				if (jsonObject.has(PROPERTIES_KEY)) {
+					properties = jsonObject.getJSONObject(PROPERTIES_KEY);
+				}
+				if (jsonObject.has(HEADERS_KEY)) {
+					headers = jsonObject.getJSONObject(HEADERS_KEY);
+				}
 			}
 
 		} catch (Exception e) {

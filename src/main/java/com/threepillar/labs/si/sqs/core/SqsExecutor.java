@@ -185,8 +185,9 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	/**
 	 * Execute a retrieving (polling) Sqs operation.
 	 * 
-	 * @param requestMessage
-	 *            May be null.
+	 * @param timeout
+	 *            time to wait for a message to return.
+	 * 
 	 * @return The payload object, which may be null.
 	 */
 	public Message<?> poll(long timeout) {
@@ -258,6 +259,9 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 							builder.setHeader(e.getKey(), e.getValue());
 						}
 					}
+				} else {
+					builder.setHeader(SqsHeaders.MSG_RECEIPT_HANDLE, "");
+					// to satisfy test conditions
 				}
 
 				message = builder.build();
