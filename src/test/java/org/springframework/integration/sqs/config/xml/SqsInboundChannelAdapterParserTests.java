@@ -89,7 +89,7 @@ public class SqsInboundChannelAdapterParserTests {
 		});
 
 		testQueue
-				.add("{\"payload\": \"Hello, World\", \"payloadClazz\": \"java.lang.String\"}");
+				.add("{\"payload\": \"Hello, World\", \"payloadClazz\": \"java.lang.String\", \"headers\": {}, \"properties\": {}}");
 
 	}
 

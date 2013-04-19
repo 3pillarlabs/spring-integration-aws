@@ -37,18 +37,8 @@
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
-      <xsd:attributeGroup ref="coreSnsComponentAttributes" />
-      <xsd:attributeGroup ref="snsSubscriptionAttributes" />
-      <xsd:attribute name="channel" type="xsd:string">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <tool:annotation kind="ref">
-              <tool:expected-type
-                type="org.springframework.integration.core.MessageChannel" />
-            </tool:annotation>
-          </xsd:appinfo>
-        </xsd:annotation>
-      </xsd:attribute>
+      <xsd:attributeGroup ref="snsInboundAttributes" />
+      <xsd:attributeGroup ref="integration:channelAdapterAttributes" />
       <xsd:attribute name="send-timeout" type="xsd:string">
         <xsd:annotation>
           <xsd:documentation><![CDATA[
@@ -66,14 +56,6 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>
-      <xsd:attribute name="phase" type="xsd:int">
-        <xsd:annotation>
-          <xsd:documentation><![CDATA[
-          Specify start up phase for LifeCycle support.
-          ]]>
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 
@@ -84,40 +66,9 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
-        <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
-          <xsd:annotation>
-            <xsd:documentation><![CDATA[
-            List of subscriptions to create after topic has been created. If subscriptions
-            already exist, no action will be taken.
-            ]]></xsd:documentation>
-          </xsd:annotation>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attributeGroup ref="coreSnsComponentAttributes" />
-      <xsd:attribute name="channel" type="xsd:string">
-        <xsd:annotation>
-          <xsd:appinfo>
-            <xsd:documentation>
-              Channel from which messages will be output.
-              When a message is sent to this channel it will be published to SNS.
-            </xsd:documentation>
-            <tool:annotation kind="ref">
-              <tool:expected-type
-                type="org.springframework.integration.MessageChannel" />
-            </tool:annotation>
-          </xsd:appinfo>
-        </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="order">
-        <xsd:annotation>
-          <xsd:documentation>
-            Specifies the order for invocation when this endpoint is connected as a
-            subscriber to a SubscribableChannel.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
+    	<xsd:complexContent>
+    		<xsd:extension base="snsOutboundType"></xsd:extension>
+    	</xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
 
@@ -128,68 +79,38 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
-        <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
-          <xsd:annotation>
-            <xsd:documentation><![CDATA[
-            List of subscriptions to create after topic has been created. If subscriptions
-            already exist, no action will be taken.
-            ]]></xsd:documentation>
-          </xsd:annotation>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attributeGroup ref="coreSnsComponentAttributes" />
-      <xsd:attribute name="request-channel" type="xsd:string"
-        use="required">
-        <xsd:annotation>
-          <xsd:documentation>
-            The receiving Message Channel of this endpoint.
-          </xsd:documentation>
-          <xsd:appinfo>
-            <tool:annotation kind="ref">
-              <tool:expected-type
-                type="org.springframework.integration.core.MessageChannel" />
-            </tool:annotation>
-          </xsd:appinfo>
-        </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="reply-channel" type="xsd:string">
-        <xsd:annotation>
-          <xsd:documentation>
-            Message Channel to which replies should be
-            sent, after receiving the database response.
-          </xsd:documentation>
-          <xsd:appinfo>
-            <tool:annotation kind="ref">
-              <tool:expected-type
-                type="org.springframework.integration.core.MessageChannel" />
-            </tool:annotation>
-          </xsd:appinfo>
-        </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="reply-timeout" type="xsd:string">
-        <xsd:annotation>
-          <xsd:documentation><![CDATA[
-            Allows you to specify how long this gateway will wait for
-            the reply message to be sent successfully before throwing
-            an exception. Keep in mind that when sending to a
-            DirectChannel, the invocation will occur in the sender's thread
-            so the failing of the send operation may be caused by other
-            components further downstream. By default the Gateway will
-            wait indefinitely. The value is specified in milliseconds.
-            ]]>
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="order">
-        <xsd:annotation>
-          <xsd:documentation>
-            Specifies the order for invocation when this endpoint is connected as a
-            subscriber to a SubscribableChannel.
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
+    	<xsd:complexContent>
+    		<xsd:extension base="snsOutboundType">
+		      <xsd:attribute name="reply-channel" type="xsd:string">
+		        <xsd:annotation>
+		          <xsd:documentation>
+		            Message Channel to which replies should be
+		            sent, after receiving the database response.
+		          </xsd:documentation>
+		          <xsd:appinfo>
+		            <tool:annotation kind="ref">
+		              <tool:expected-type
+		                type="org.springframework.integration.core.MessageChannel" />
+		            </tool:annotation>
+		          </xsd:appinfo>
+		        </xsd:annotation>
+		      </xsd:attribute>
+		      <xsd:attribute name="reply-timeout" type="xsd:string">
+		        <xsd:annotation>
+		          <xsd:documentation><![CDATA[
+		            Allows you to specify how long this gateway will wait for
+		            the reply message to be sent successfully before throwing
+		            an exception. Keep in mind that when sending to a
+		            DirectChannel, the invocation will occur in the sender's thread
+		            so the failing of the send operation may be caused by other
+		            components further downstream. By default the Gateway will
+		            wait indefinitely. The value is specified in milliseconds.
+		            ]]>
+		          </xsd:documentation>
+		        </xsd:annotation>
+		      </xsd:attribute>
+    		</xsd:extension>
+    	</xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
 
@@ -206,69 +127,56 @@
       </xsd:appinfo>
     </xsd:annotation>
     <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="interceptors" type="integration:channelInterceptorsType" minOccurs="0" maxOccurs="1">
-          <xsd:annotation>
-            <xsd:documentation><![CDATA[
-    A list of ChannelInterceptor instances to be applied to this channel.
-            ]]></xsd:documentation>
-          </xsd:annotation>
-        </xsd:element>
-        <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
-          <xsd:annotation>
-            <xsd:documentation><![CDATA[
-            List of subscriptions to create after topic has been created. If subscriptions
-            already exist, no action will be taken.
-            ]]></xsd:documentation>
-          </xsd:annotation>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attributeGroup ref="coreSnsComponentAttributes" />
-      <xsd:attributeGroup ref="snsSubscriptionAttributes" />
-      <xsd:attribute name="phase" type="xsd:int">
-        <xsd:annotation>
-          <xsd:documentation><![CDATA[
-          Specify start up phase for LifeCycle support.
-          ]]>
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
-      <xsd:attribute name="datatype" type="xsd:string">
-        <xsd:annotation>
-          <xsd:documentation>
-            <![CDATA[
-    Allows you to identify this channel as Datatype channel and specify the type of the Message
-    payload this channel accepts (e.g., datatype="java.lang.String"). Datatype channel
-    is a channel that accepts messages cotaining payload of certain type.
-            ]]>
-          </xsd:documentation>
-        </xsd:annotation>
-      </xsd:attribute>
+    	<xsd:complexContent>
+    		<xsd:extension base="integration:channelType">
+		      <xsd:sequence>
+		        <xsd:element name="interceptors" type="integration:channelInterceptorsType" minOccurs="0" maxOccurs="1">
+		          <xsd:annotation>
+		            <xsd:documentation><![CDATA[
+		    A list of ChannelInterceptor instances to be applied to this channel.
+		            ]]></xsd:documentation>
+		          </xsd:annotation>
+		        </xsd:element>
+		        <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
+		          <xsd:annotation>
+		            <xsd:documentation><![CDATA[
+		            List of subscriptions to create after topic has been created. If subscriptions
+		            already exist, no action will be taken.
+		            ]]></xsd:documentation>
+		          </xsd:annotation>
+		        </xsd:element>
+		      </xsd:sequence>
+		      <xsd:attributeGroup ref="snsInboundAttributes" />
+    		</xsd:extension>
+    	</xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
 
+	<xsd:complexType name="snsOutboundType">
+	  <xsd:sequence>
+	    <xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
+	    <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
+	      <xsd:annotation>
+	        <xsd:documentation><![CDATA[
+	        List of subscriptions to create after topic has been created. If subscriptions
+	        already exist, no action will be taken.
+	        ]]></xsd:documentation>
+	      </xsd:annotation>
+	    </xsd:element>
+	  </xsd:sequence>
+	  <xsd:attributeGroup ref="coreSnsComponentAttributes" />
+		<xsd:attributeGroup ref="integration:channelAdapterAttributes" />
+     <xsd:attribute name="order">
+       <xsd:annotation>
+         <xsd:documentation>
+           Specifies the order for invocation when this endpoint is connected as a
+           subscriber to a SubscribableChannel.
+         </xsd:documentation>
+       </xsd:annotation>
+     </xsd:attribute>
+	</xsd:complexType>
+
   <xsd:attributeGroup name="coreSnsComponentAttributes">
-    <xsd:attribute name="id" type="xsd:string" use="optional">
-      <xsd:annotation>
-        <xsd:documentation>
-          Identifies the underlying Spring bean definition, which is an
-          instance of either 'EventDrivenConsumer' or 'PollingConsumer',
-          depending on whether the component's input channel is a
-          'SubscribableChannel' or 'PollableChannel'.
-        </xsd:documentation>
-      </xsd:annotation>
-    </xsd:attribute>
-    <xsd:attribute name="auto-startup" default="true" use="optional">
-      <xsd:annotation>
-        <xsd:documentation>
-          Flag to indicate that the component should start automatically
-          on startup (default true).
-        </xsd:documentation>
-      </xsd:annotation>
-      <xsd:simpleType>
-        <xsd:union memberTypes="xsd:boolean xsd:string" />
-      </xsd:simpleType>
-    </xsd:attribute>
     <xsd:attribute name="topic-name" use="required" type="xsd:string">
       <xsd:annotation>
         <xsd:documentation><![CDATA[
@@ -393,5 +301,18 @@
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
+
+	<xsd:attributeGroup name="snsInboundAttributes">
+    <xsd:attributeGroup ref="coreSnsComponentAttributes" />
+    <xsd:attributeGroup ref="snsSubscriptionAttributes" />
+    <xsd:attribute name="phase" type="xsd:int">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        Specify start up phase for LifeCycle support.
+        ]]>
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+	</xsd:attributeGroup>
 
 </xsd:schema>

@@ -20,7 +20,7 @@
 
   <int-sns:outbound-gateway id="snsOutboundGateway" 
       topic-name="testTopic" 
-      request-channel="in"
+      channel="in"
       reply-channel="out"
       reply-timeout="100" 
       sns-test-proxy="snsTestProxy"/>

@@ -66,7 +66,7 @@ public class SqsOutboundGatewayParser extends AbstractConsumerEndpointParser {
 
 	@Override
 	protected String getInputChannelAttributeName() {
-		return "request-channel";
+		return "channel";
 	}
 
 }
