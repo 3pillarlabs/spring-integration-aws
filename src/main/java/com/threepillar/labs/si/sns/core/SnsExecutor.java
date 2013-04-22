@@ -1,6 +1,7 @@
 package com.threepillar.labs.si.sns.core;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,8 +44,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	private String topicArn;
 	private HttpEndpoint httpEndpoint;
 	private List<Subscription> subscriptionList;
-	private String httpEndpointPath;
-	private SqsExecutor sqsExecutor;
+	private Map<String, SqsExecutor> sqsExecutorMap;
 
 	/**
 	 * Constructor.
@@ -92,7 +92,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	private void processSubscriptions() {
-		if (subscriptionList != null) {
+		if (subscriptionList != null && !subscriptionList.isEmpty()) {
 			for (Subscription subscription : subscriptionList) {
 				if (subscription.getProtocol().startsWith("http")) {
 					processUrlSubscription(subscription);
@@ -105,11 +105,6 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	private void processUrlSubscription(Subscription urlSubscription) {
-
-		if (!urlSubscription.getEndpoint().endsWith(httpEndpointPath)) {
-			String stub = urlSubscription.getEndpoint();
-			urlSubscription.setEndpoint(stub.concat(httpEndpointPath));
-		}
 
 		String snsUrlSubscriptionArn = null;
 		for (Subscription subscription : client.listSubscriptions()
@@ -141,9 +136,19 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	private void processSqsSubscription(Subscription sqsSubscription) {
-		Assert.state(sqsExecutor != null, "'sqsExecutor' must not be null");
+		Assert.state(sqsExecutorMap != null,
+				"'sqsExecutorMap' must not be null");
 
-		sqsSubscription.setEndpoint(sqsExecutor.getQueueArn());
+		SqsExecutor sqsExecutor = null;
+		String endpointValue = sqsSubscription.getEndpoint();
+		if (sqsExecutorMap.containsKey(endpointValue)) {
+			sqsExecutor = sqsExecutorMap.get(endpointValue);
+			sqsSubscription.setEndpoint(sqsExecutor.getQueueArn());
+		} else {
+			// endpointValue is the queue-arn
+			sqsSubscription.setEndpoint(endpointValue);
+		}
+
 		String snsSqsSubscriptionArn = null;
 		for (Subscription subscription : client.listSubscriptions()
 				.getSubscriptions()) {
@@ -167,7 +172,9 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		} else {
 			log.info("Already subscribed with ARN: " + snsSqsSubscriptionArn);
 		}
-		sqsExecutor.addSnsPublishPolicy(topicName, topicArn);
+		if (sqsExecutor != null) {
+			sqsExecutor.addSnsPublishPolicy(topicName, topicArn);
+		}
 	}
 
 	/**
@@ -237,10 +244,6 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		this.regionId = regionId;
 	}
 
-	public void setHttpEndpointPath(String httpEndpointPath) {
-		this.httpEndpointPath = httpEndpointPath;
-	}
-
 	public void setHttpEndpoint(HttpEndpoint httpEndpoint) {
 		this.httpEndpoint = httpEndpoint;
 	}
@@ -249,8 +252,8 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		this.subscriptionList = subscriptionList;
 	}
 
-	public void setSqsExecutor(SqsExecutor sqsExecutor) {
-		this.sqsExecutor = sqsExecutor;
+	public void setSqsExecutorMap(Map<String, SqsExecutor> sqsExecutorMap) {
+		this.sqsExecutorMap = sqsExecutorMap;
 	}
 
 	@Override

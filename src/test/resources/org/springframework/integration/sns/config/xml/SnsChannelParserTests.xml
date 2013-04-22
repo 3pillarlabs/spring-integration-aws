@@ -14,10 +14,11 @@
   <int-sns:publish-subscribe-channel id="snsChannel"
       topic-name="testTopic"
       sns-test-proxy="snsTestProxy"
-      http-endpoint-path="/example.do"
-      sns-executor-proxy="snsExecutorProxy" />
+      sns-executor-proxy="snsExecutorProxy">
+      
+  	<int-sns:endpoint base-uri="http://www.example.com" />    
+  </int-sns:publish-subscribe-channel>
       
   <int-stream:stdout-channel-adapter id="stdout" channel="snsChannel" append-newline="true"/>
-
 
 </beans>

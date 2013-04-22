@@ -50,6 +50,9 @@ public class SnsOutboundGatewayParser extends AbstractConsumerEndpointParser {
 						parserContext);
 		final String snsExecutorBeanName = gatewayId + ".snsExecutor";
 
+		SnsParserUtils.registerSubscriptions(gatewayElement, parserContext,
+				snsExecutorBuilder, gatewayId);
+
 		parserContext.registerBeanComponent(new BeanComponentDefinition(
 				snsExecutorBuilderBeanDefinition, snsExecutorBeanName));
 

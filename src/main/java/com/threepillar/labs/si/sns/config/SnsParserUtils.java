@@ -2,10 +2,14 @@ package com.threepillar.labs.si.sns.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.springframework.util.Assert;
@@ -69,20 +73,42 @@ public final class SnsParserUtils {
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(
 				snsExecutorBuilder, element, "region-id");
 
-		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
-				snsExecutorBuilder, element, "subscription-list");
+		return snsExecutorBuilder;
 
-		if (element.hasAttribute("http-endpoint-path")) {
-			String urlPath = element.getAttribute("http-endpoint-path");
-			snsExecutorBuilder.addPropertyValue("httpEndpointPath", urlPath);
+	}
+
+	public static void registerSubscriptions(final Element element,
+			final ParserContext parserContext,
+			final BeanDefinitionBuilder snsExecutorBuilder,
+			final String channelAdapterId) {
+
+		List<Subscription> subscriptionList = new ArrayList<Subscription>();
+		Map<String, BeanReference> sqsExecutorMap = new ManagedMap<String, BeanReference>();
+
+		// HTTP endpoint
+		Element endpointElement = DomUtils.getChildElementByTagName(element,
+				"endpoint");
+		if (endpointElement != null) {
+			String baseURI = endpointElement.getAttribute("base-uri");
+			String requestPath = null;
+			if (endpointElement.hasAttribute("request-path")) {
+				requestPath = endpointElement.getAttribute("request-path");
+			} else {
+				requestPath = String.format("/%s.do", channelAdapterId);
+			}
+			subscriptionList.add(new Subscription()
+					.withEndpoint(baseURI.concat(requestPath))
+					.withProtocol(
+							baseURI.startsWith("https") ? "https" : "http"));
+
 			// register a HttpEndpoint at this path
 			BeanDefinitionBuilder httpEndpointBuilder = BeanDefinitionBuilder
 					.genericBeanDefinition(HttpEndpoint.class);
-			String beanName = String.format("%s-httpEndpoint",
-					element.getAttribute("topic-name"));
+			String beanName = String
+					.format("%s-httpEndpoint", channelAdapterId);
 			parserContext.registerBeanComponent(new BeanComponentDefinition(
 					httpEndpointBuilder.getBeanDefinition(), beanName,
-					new String[] { urlPath }));
+					new String[] { requestPath }));
 			snsExecutorBuilder.addPropertyReference("httpEndpoint", beanName);
 		}
 
@@ -91,33 +117,60 @@ public final class SnsParserUtils {
 				element, "subscriptions");
 		if (subscriptionsElement != null) {
 			NodeList childNodes = subscriptionsElement.getChildNodes();
-			List<Subscription> subscriptionList = new ArrayList<Subscription>(
-					childNodes.getLength());
 			for (int i = 0; i < childNodes.getLength(); i++) {
 				Node child = childNodes.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
 					Element childElement = (Element) child;
 					String localName = child.getLocalName();
-					if ("subscription".equals(localName)) {
-						String protocol = childElement.getAttribute("protocol");
-						String endpoint = childElement.getAttribute("endpoint");
-						if (protocol.equals("sqs")) {
-							// endpoint is actually a SQS channel (adapter) id
-							String sqsBeanName = SqsParserUtils
-									.getExecutorBeanName(endpoint);
-							snsExecutorBuilder.addPropertyReference(
-									"sqsExecutor", sqsBeanName);
+					if ("http".equals(localName)) {
+						String uri = childElement.getAttribute("base-uri");
+						if (childElement.hasAttribute("request-path")) {
+							uri = uri.concat(childElement
+									.getAttribute("request-path"));
 						}
-						subscriptionList.add(new Subscription().withEndpoint(
-								endpoint).withProtocol(protocol));
+						subscriptionList.add(new Subscription()
+								.withEndpoint(uri)
+								.withProtocol(
+										uri.startsWith("https") ? "https" :
+												"http"));
+
+					} else if ("sqs".equals(localName)) {
+						String queueArn = null;
+						if (childElement.hasAttribute("queue-arn")) {
+							queueArn = childElement.getAttribute("queue-arn");
+						}
+						String queueId = null;
+						if (childElement.hasAttribute("queue-id")) {
+							queueId = childElement.getAttribute("queue-id");
+						}
+						Assert.state(queueArn != null || queueId != null,
+								"One of 'queue-arn' or 'queue-id' needs to be defined");
+						if (queueId != null) {
+							String sqsBeanName = SqsParserUtils
+									.getExecutorBeanName(queueId);
+							snsExecutorBuilder.addDependsOn(sqsBeanName);
+							sqsExecutorMap.put(queueId,
+									new RuntimeBeanReference(sqsBeanName));
+							subscriptionList.add(new Subscription()
+									.withEndpoint(queueId)
+									.withProtocol("sqs"));
+
+						} else {
+							subscriptionList.add(new Subscription()
+									.withEndpoint(queueArn)
+									.withProtocol("sqs"));
+						}
 					}
 				}
 			}
-			snsExecutorBuilder.addPropertyValue("subscriptionList",
-					subscriptionList);
+			if (!sqsExecutorMap.isEmpty()) {
+				snsExecutorBuilder.addPropertyValue("sqsExecutorMap",
+						sqsExecutorMap);
+			}
 		}
 
-		return snsExecutorBuilder;
+		snsExecutorBuilder.addPropertyValue("subscriptionList",
+				subscriptionList);
 
 	}
 

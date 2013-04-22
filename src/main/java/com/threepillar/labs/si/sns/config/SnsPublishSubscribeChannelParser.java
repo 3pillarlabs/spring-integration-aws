@@ -29,6 +29,9 @@ public class SnsPublishSubscribeChannelParser extends AbstractChannelParser {
 				beanDefinitionBuilder.getRawBeanDefinition(), parserContext);
 		final String snsExecutorBeanName = channelAdapterId + ".snsExecutor";
 
+		SnsParserUtils.registerSubscriptions(element, parserContext,
+				snsExecutorBuilder, channelAdapterId);
+
 		parserContext.registerBeanComponent(new BeanComponentDefinition(
 				snsExecutorBuilderBeanDefinition, snsExecutorBeanName));
 

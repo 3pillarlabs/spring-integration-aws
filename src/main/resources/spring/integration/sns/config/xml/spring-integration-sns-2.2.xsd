@@ -28,13 +28,12 @@
     </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
-          <xsd:annotation>
-            <xsd:documentation><![CDATA[
-            List of subscriptions to create after topic has been created. If subscriptions
-            already exist, no action will be taken.
-            ]]></xsd:documentation>
-          </xsd:annotation>
+        <xsd:element name="endpoint" type="httpSubscriptionType" minOccurs="1" maxOccurs="1">
+        	<xsd:annotation>
+        		<xsd:documentation><![CDATA[
+        		HTTP endpoint information for incoming SNS messages
+        		]]></xsd:documentation>
+        	</xsd:annotation>
         </xsd:element>
       </xsd:sequence>
       <xsd:attributeGroup ref="snsInboundAttributes" />
@@ -130,18 +129,24 @@
     	<xsd:complexContent>
     		<xsd:extension base="integration:channelType">
 		      <xsd:sequence>
+		        <xsd:element name="endpoint" type="httpSubscriptionType" minOccurs="1" maxOccurs="1">
+		        	<xsd:annotation>
+		        		<xsd:documentation><![CDATA[
+		        		HTTP endpoint information for incoming SNS messages
+		        		]]></xsd:documentation>
+		        	</xsd:annotation>
+		        </xsd:element>
+		        <xsd:element name="subscriptions" minOccurs="0" maxOccurs="1" type="subscriptionsType">
+		        	<xsd:annotation>
+		        		<xsd:documentation><![CDATA[
+		        		A list of subscriptions to the SNS topics.
+		        		]]></xsd:documentation>
+		        	</xsd:annotation>
+		        </xsd:element>
 		        <xsd:element name="interceptors" type="integration:channelInterceptorsType" minOccurs="0" maxOccurs="1">
 		          <xsd:annotation>
 		            <xsd:documentation><![CDATA[
 		    A list of ChannelInterceptor instances to be applied to this channel.
-		            ]]></xsd:documentation>
-		          </xsd:annotation>
-		        </xsd:element>
-		        <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
-		          <xsd:annotation>
-		            <xsd:documentation><![CDATA[
-		            List of subscriptions to create after topic has been created. If subscriptions
-		            already exist, no action will be taken.
 		            ]]></xsd:documentation>
 		          </xsd:annotation>
 		        </xsd:element>
@@ -152,17 +157,37 @@
     </xsd:complexType>
   </xsd:element>
 
+ 	<xsd:complexType name="subscriptionsType">
+ 		<xsd:sequence>
+ 			<xsd:element name="http" type="httpSubscriptionType" minOccurs="0" maxOccurs="unbounded">
+ 				<xsd:annotation>
+ 					<xsd:documentation><![CDATA[
+		URL destination for outbound messages. The URLs can be either internal application
+		URLs for external URLs.
+		]]></xsd:documentation>
+ 				</xsd:annotation>
+ 			</xsd:element>
+ 			<xsd:element name="sqs" type="sqsSubscriptionType" minOccurs="0" maxOccurs="unbounded">
+ 				<xsd:annotation>
+ 					<xsd:documentation><![CDATA[
+		SQS destination for outbound messages. The SQS queues must exist, the subscription
+		and permission will be created if they do not exist.
+		]]></xsd:documentation>
+ 				</xsd:annotation>
+ 			</xsd:element>
+ 		</xsd:sequence>
+ 	</xsd:complexType>
+
 	<xsd:complexType name="snsOutboundType">
 	  <xsd:sequence>
+      <xsd:element name="subscriptions" minOccurs="0" maxOccurs="1" type="subscriptionsType">
+      	<xsd:annotation>
+      		<xsd:documentation><![CDATA[
+      		A list of subscriptions to the SNS topics.
+      		]]></xsd:documentation>
+      	</xsd:annotation>
+      </xsd:element>
 	    <xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
-	    <xsd:element name="subscriptions" type="subscriptionsType" minOccurs="0" maxOccurs="1">
-	      <xsd:annotation>
-	        <xsd:documentation><![CDATA[
-	        List of subscriptions to create after topic has been created. If subscriptions
-	        already exist, no action will be taken.
-	        ]]></xsd:documentation>
-	      </xsd:annotation>
-	    </xsd:element>
 	  </xsd:sequence>
 	  <xsd:attributeGroup ref="coreSnsComponentAttributes" />
 		<xsd:attributeGroup ref="integration:channelAdapterAttributes" />
@@ -232,79 +257,9 @@
       </xsd:annotation>
     </xsd:attribute>
   </xsd:attributeGroup>
-  
-  <xsd:attributeGroup name="snsSubscriptionAttributes">
-    <xsd:attribute name="http-endpoint-path" type="xsd:string" use="required">
-      <xsd:annotation>
-        <xsd:documentation><![CDATA[
-        Endpoint path to register a HTTP listener, must begin with a "/" (forwar-slash),
-        for example "/path.do". The path should NOT start with the servlet context. 
-        ]]>
-        </xsd:documentation>
-      </xsd:annotation>
-    </xsd:attribute>
-    <xsd:attribute name="subscription-list">
-      <xsd:annotation>
-        <xsd:documentation><![CDATA[
-          Reference to a List<com.amazonaws.services.sns.model.Subscription>, which 
-          will be added as subscribers to the SNS topic.
-          ]]>
-        </xsd:documentation>
-        <xsd:appinfo>
-          <tool:annotation kind="ref">
-            <tool:assignable-to type="java.util.List"/>
-          </tool:annotation>
-        </xsd:appinfo>
-      </xsd:annotation>
-    </xsd:attribute>
-  </xsd:attributeGroup>
-
-  <xsd:complexType name="subscriptionsType">
-    <xsd:annotation>
-      <xsd:documentation><![CDATA[
-      Defines a list of subscriptions for a SNS topic.
-      ]]></xsd:documentation>
-    </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="subscription" minOccurs="1" maxOccurs="unbounded">
-        <xsd:annotation>
-          <xsd:documentation><![CDATA[
-          Defines a SNS subscription
-          ]]></xsd:documentation>
-        </xsd:annotation>
-        <xsd:complexType>
-          <xsd:attribute name="endpoint" type="xsd:anyURI" use="required">
-            <xsd:annotation>
-              <xsd:documentation><![CDATA[
-              The URL endpoint to send SNS messages; can omit the request path information
-              but MUST include the servlet context path.
-              ]]>
-              </xsd:documentation>
-            </xsd:annotation>
-          </xsd:attribute>
-          <xsd:attribute name="protocol" use="required">
-            <xsd:annotation>
-              <xsd:documentation><![CDATA[
-              The protcol for the subscription.
-              ]]>
-              </xsd:documentation>
-            </xsd:annotation>
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="http" />
-                <xsd:enumeration value="https" />
-                <xsd:enumeration value="sqs" />
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:attribute>
-        </xsd:complexType>
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
 
 	<xsd:attributeGroup name="snsInboundAttributes">
     <xsd:attributeGroup ref="coreSnsComponentAttributes" />
-    <xsd:attributeGroup ref="snsSubscriptionAttributes" />
     <xsd:attribute name="phase" type="xsd:int">
       <xsd:annotation>
         <xsd:documentation><![CDATA[
@@ -314,5 +269,15 @@
       </xsd:annotation>
     </xsd:attribute>
 	</xsd:attributeGroup>
+
+	<xsd:complexType name="httpSubscriptionType">
+		<xsd:attribute name="base-uri" type="xsd:anyURI" use="required" />
+		<xsd:attribute name="request-path" type="xsd:string" />
+	</xsd:complexType>
+
+	<xsd:complexType name="sqsSubscriptionType">
+		<xsd:attribute name="queue-id" type="xsd:string" />
+		<xsd:attribute name="queue-arn" type="xsd:string" />
+	</xsd:complexType>
 
 </xsd:schema>

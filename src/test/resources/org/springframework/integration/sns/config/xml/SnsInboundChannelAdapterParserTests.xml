@@ -15,7 +15,9 @@
   <int-sns:inbound-channel-adapter id="snsInboundChannelAdapter" 
       topic-name="testTopic" 
       channel="out"
-      sns-test-proxy="snsTestProxy"
-      http-endpoint-path="/example.do" />
+      sns-test-proxy="snsTestProxy">
+      
+  	<int-sns:endpoint base-uri="http://www.example.com:8080" />
+  </int-sns:inbound-channel-adapter>
 
 </beans>
