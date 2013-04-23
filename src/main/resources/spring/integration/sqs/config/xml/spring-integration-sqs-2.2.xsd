@@ -18,22 +18,6 @@
 			SQS Adapter.
 		]]></xsd:documentation>
   </xsd:annotation>
-	
-	<xsd:complexType name="sqsOutboundType">
-		<xsd:complexContent>
-			<xsd:extension base="integration:channelAdapterType">
-				<xsd:attributeGroup ref="coreSqsComponentAttributes" />
-	      <xsd:attribute name="order">
-	        <xsd:annotation>
-	          <xsd:documentation>
-	            Specifies the order for invocation when this endpoint is connected as a
-	            subscriber to a SubscribableChannel.
-	          </xsd:documentation>
-	        </xsd:annotation>
-	      </xsd:attribute>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
 
 	<xsd:element name="inbound-channel-adapter">
 		<xsd:complexType>
@@ -307,5 +291,21 @@
 		  </xsd:annotation>
 		</xsd:attribute>
 	</xsd:attributeGroup>
+	
+	<xsd:complexType name="sqsOutboundType">
+		<xsd:complexContent>
+			<xsd:extension base="integration:channelAdapterType">
+				<xsd:attributeGroup ref="coreSqsComponentAttributes" />
+	      <xsd:attribute name="order">
+	        <xsd:annotation>
+	          <xsd:documentation>
+	            Specifies the order for invocation when this endpoint is connected as a
+	            subscriber to a SubscribableChannel.
+	          </xsd:documentation>
+	        </xsd:annotation>
+	      </xsd:attribute>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
 
 </xsd:schema>
