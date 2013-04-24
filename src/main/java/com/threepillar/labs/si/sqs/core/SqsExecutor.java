@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -42,6 +43,7 @@ import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
+import com.amazonaws.util.Md5Utils;
 import com.threepillar.labs.si.aws.MessagePacket;
 import com.threepillar.labs.si.sqs.SqsHeaders;
 
@@ -99,7 +101,9 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 				"Either queue or awsCredentialsProvider needs to be provided");
 
 		if (queue == null) {
-			sqsClient = new AmazonSQSClient(awsCredentialsProvider);
+			if (sqsClient == null) {
+				sqsClient = new AmazonSQSClient(awsCredentialsProvider);
+			}
 			if (regionId != null) {
 				sqsClient.setEndpoint(String.format("sqs.%s.amazonaws.com",
 						regionId));
@@ -218,6 +222,21 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 				}
 				if (qMessage != null) {
 					payloadJSON = qMessage.getBody();
+					// MD5 verification
+					try {
+						byte[] computedHash = Md5Utils
+								.computeMD5Hash(payloadJSON.getBytes("UTF-8"));
+						String hexDigest = new String(
+								Hex.encodeHex(computedHash));
+						if (!hexDigest.equals(qMessage.getMD5OfBody())) {
+							payloadJSON = null; // ignore this message
+							log.warn("Dropped message due to MD5 checksum failure");
+						}
+					} catch (Exception e) {
+						log.warn(
+								"Failed to verify MD5 checksum: "
+										+ e.getMessage(), e);
+					}
 				}
 			} else {
 				try {
@@ -431,6 +450,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 			sqsClient.setQueueAttributes(request);
 		}
+	}
+
+	public void setSqsClient(AmazonSQS sqsClient) {
+		this.sqsClient = sqsClient;
 	}
 
 }

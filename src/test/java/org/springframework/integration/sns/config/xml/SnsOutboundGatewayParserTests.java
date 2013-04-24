@@ -25,7 +25,7 @@ public class SnsOutboundGatewayParserTests {
 	private EventDrivenConsumer consumer;
 
 	@Test
-	public void testRetrievingJpaOutboundGatewayParser() throws Exception {
+	public void testSnsOutboundGatewayParser() throws Exception {
 		setUp("SnsOutboundGatewayParserTests.xml", getClass(),
 				"snsOutboundGateway");
 
@@ -56,7 +56,7 @@ public class SnsOutboundGatewayParserTests {
 	}
 
 	@Test
-	public void testJpaExecutorBeanIdNaming() throws Exception {
+	public void testSnsExecutorBeanIdNaming() throws Exception {
 
 		this.context = new ClassPathXmlApplicationContext(
 				"SnsOutboundGatewayParserTests.xml", getClass());
