@@ -1,9 +1,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.threepillar.labs</groupId>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+  <groupId>com.3pillarglobal.labs</groupId>
   <artifactId>spring-integration-aws</artifactId>
   <version>1.0.0-RELEASE</version>
   <name>Spring Integration AWS</name>
+  <description>A collection of channels and channel adapters for receiving and sending messages using Amazon Simple Queue Service (SQS) and Amazon Simple Notification Service (SNS).</description>
+  
+	<url>https://github.com/3pillarlabs/spring-integration-aws</url>
+
+	<licenses>
+		<license>
+			<name>MIT license (also X11)</name>
+			<url>http://www.spdx.org/licenses/MIT</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>git://github.com/3pillarlabs/spring-integration-aws.git</connection>
+		<url>https://github.com/3pillarlabs/spring-integration-aws</url>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>3pillarlabs</id>
+			<name>3Pillar Global Labs</name>
+			<email>labs@3pillarglobal.com</email>
+			<url>http://labs.3pillarglobal.com/</url>
+			<organization>3Pillar Global</organization>
+			<organizationUrl>http://www.3pillarglobal.com/</organizationUrl>
+		</developer>
+	</developers>
 
   <properties>
     <spring.framework.version>3.1.2.RELEASE</spring.framework.version>
@@ -104,48 +136,6 @@
       </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
-				<executions>
-					<execution>
-            <id>attach-sources</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
-				<executions>
-					<execution>
-            <id>attach-javadoc</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-            <id>deploy</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>deploy</goal>
-            </goals>
-          </execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.13</version>
 				<configuration>
@@ -157,13 +147,5 @@
 			</plugin>
     </plugins>
   </build>
-
-	<distributionManagement>
-		<repository>
-			<id>3pillarlabs</id>
-			<name>3pillarlabs-releases</name>
-			<url>http://labs.3pillarglobal.com:11001/artifactory/libs-release-local</url>
-		</repository>
-	</distributionManagement>  
 
 </project>
