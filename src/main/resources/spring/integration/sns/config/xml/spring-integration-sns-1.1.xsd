@@ -66,7 +66,7 @@
     </xsd:annotation>
     <xsd:complexType>
     	<xsd:complexContent>
-    		<xsd:extension base="snsOutboundType"></xsd:extension>
+    		<xsd:extension base="snsOutboundType"/>
     	</xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
@@ -236,6 +236,21 @@
           <tool:annotation kind="ref">
             <tool:assignable-to
               type="com.amazonaws.auth.AWSCredentialsProvider" />
+          </tool:annotation>
+        </xsd:appinfo>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="aws-client-configuration" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Reference to a com.amazonaws.ClientConfiguration bean, required if
+          HTTP/HTTPS connection settings, such as proxy configuration, should be overwritten.
+          ]]>
+        </xsd:documentation>
+        <xsd:appinfo>
+          <tool:annotation kind="ref">
+            <tool:assignable-to
+                type="com.amazonaws.ClientConfiguration" />
           </tool:annotation>
         </xsd:appinfo>
       </xsd:annotation>

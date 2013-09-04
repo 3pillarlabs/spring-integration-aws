@@ -3,6 +3,7 @@ package com.threepillar.labs.si.sns.core;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.ClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -45,6 +46,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	private HttpEndpoint httpEndpoint;
 	private List<Subscription> subscriptionList;
 	private Map<String, SqsExecutor> sqsExecutorMap;
+    private ClientConfiguration awsClientConfiguration;
 
 	/**
 	 * Constructor.
@@ -64,8 +66,12 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 				"Either snsTestProxy or awsCredentialsProvider needs to be provided");
 
 		if (snsTestProxy == null) {
-			client = new AmazonSNSClient(awsCredentialsProvider);
-			if (regionId != null) {
+            if (awsClientConfiguration == null) {
+                client = new AmazonSNSClient(awsCredentialsProvider);
+            } else {
+                client = new AmazonSNSClient(awsCredentialsProvider, awsClientConfiguration);
+            }
+            if (regionId != null) {
 				client.setEndpoint(String.format("sns.%s.amazonaws.com",
 						regionId));
 			}
@@ -124,7 +130,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		if (snsUrlSubscriptionArn == null) {
 
 			SubscribeRequest request = new SubscribeRequest(topicArn,
-					urlSubscription.getProtocol().toString(),
+                    urlSubscription.getProtocol(),
 					urlSubscription.getEndpoint());
 			SubscribeResult result = client.subscribe(request);
 			snsUrlSubscriptionArn = result.getSubscriptionArn();
@@ -215,10 +221,8 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	/**
-	 * Example property to illustrate usage of properties in Spring Integration
-	 * components. Replace with your own logic.
-	 * 
-	 * @param exampleProperty
+	 * Set topic name
+	 * @param topicName
 	 *            Must not be null
 	 */
 	public void setTopicName(String topicName) {
@@ -240,7 +244,13 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		this.awsCredentialsProvider = awsCredentialsProvider;
 	}
 
-	public void setRegionId(String regionId) {
+    @Autowired(required = false)
+    public void setAwsClientConfiguration(ClientConfiguration awsClientConfiguration) {
+        log.info("Set AWS client configuration to '" + awsClientConfiguration + "'.");
+        this.awsClientConfiguration = awsClientConfiguration;
+    }
+
+    public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
 

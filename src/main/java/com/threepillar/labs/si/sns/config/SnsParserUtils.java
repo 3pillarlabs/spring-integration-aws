@@ -25,7 +25,7 @@ import com.threepillar.labs.si.sns.core.SnsExecutor;
 import com.threepillar.labs.si.sqs.config.SqsParserUtils;
 
 /**
- * Contains various utility methods for parsing Sns Adapter specific namesspace
+ * Contains various utility methods for parsing Sns Adapter specific namespace
  * elements as well as for the generation of the the respective
  * {@link BeanDefinition}s.
  * 
@@ -73,7 +73,10 @@ public final class SnsParserUtils {
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(
 				snsExecutorBuilder, element, "region-id");
 
-		return snsExecutorBuilder;
+        IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
+                snsExecutorBuilder, element, "aws-client-configuration");
+
+        return snsExecutorBuilder;
 
 	}
 

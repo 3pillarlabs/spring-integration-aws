@@ -82,7 +82,7 @@ Minimum XML configuration:
 		channel="out"
 		aws-credentials-provider="bean-ref" />
 
-1. **channel**: the message channel to which retreived messages will be sent
+1. **channel**: the message channel to which retrieved messages will be sent
 
 There are many more attributes to control message visibility and worker shutdown period, use your IDE to learn more.
 
@@ -107,7 +107,7 @@ Amazon SNS (Simple Notification Service) is a publish subcribe messaging system,
 
 - Supports both outgoing messages and incoming messages (via a transparent HTTP endpint)
 - Support for transparent SQS subscriptions and permissions
-- Publish subcribe channel for multiple subscribers
+- Publish subscribe channel for multiple subscribers
 - Signature verification of incoming messages to HTTP endpoint
 - Auto create SNS topics if they do not exist
 
@@ -136,7 +136,7 @@ This is same as the outbound adapter, you need to add the `reply-channel` attrib
 
 ### Inbound Adapter
 
-An inbound adapter can be used to recieve messages from a SNS topic. Behind the scenes, a HTTP endpoint is registered for an inbound adapter; this implies that the inbound adapter can only be used in a web context.
+An inbound adapter can be used to receive messages from a SNS topic. Behind the scenes, a HTTP endpoint is registered for an inbound adapter; this implies that the inbound adapter can only be used in a web context.
 
 Minimum XML configuration
 
@@ -168,7 +168,7 @@ Minimum XML configuration
 
 ### SNS Subscriptions
 
-It is possible to add SNS subcriptions to the SNS adapters. Information on GitHub wiki to be added soon.
+It is possible to add SNS subscriptions to the SNS adapters. Information on GitHub wiki to be added soon.
 
 
 Reporting Issues

@@ -9,17 +9,13 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-1.1.xsd">
 
+  <bean id="awsClientConfiguration" class="com.amazonaws.ClientConfiguration">
+    <property name="proxyHost" value="PROXY_HOST"/>
+    <property name="protocol" value="HTTPS"/>
+  </bean>
+
   <bean id="testQueue" class="com.threepillar.labs.si.test.support.BlockingQueueFactory" 
       factory-method="createBlockingQueue" />
 
-  <int-sqs:channel queue-name="testQueue" id="sqsChannel" queue="testQueue" sqs-executor-proxy="sqsExecutorProxy">
-  	<int-sqs:interceptors>
-  		<int:wire-tap channel="log"/>
-  	</int-sqs:interceptors>
-  </int-sqs:channel>
-  
-  <int:channel id="log" />
-
-  <int-stream:stdout-channel-adapter channel="sqsChannel" id="stdout" append-newline="true"/>
-
+  <int-sqs:channel queue-name="testQueue" id="sqsChannelWithClientConfiguration" queue="testQueue" sqs-executor-proxy="sqsExecutorProxy"/>
 </beans>

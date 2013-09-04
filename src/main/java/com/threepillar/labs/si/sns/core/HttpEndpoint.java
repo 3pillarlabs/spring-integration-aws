@@ -94,7 +94,7 @@ public class HttpEndpoint implements HttpRequestHandler {
 						.openConnection();
 				http.setDoOutput(false);
 				http.setDoInput(true);
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder buffer = new StringBuilder();
 				byte[] buf = new byte[4096];
 				while ((http.getInputStream().read(buf)) >= 0) {
 					buffer.append(new String(buf));
@@ -127,7 +127,7 @@ public class HttpEndpoint implements HttpRequestHandler {
 
 	private String readBody(HttpServletRequest request) throws IOException {
 
-		StringBuffer buffer = new StringBuffer(request.getContentLength());
+		StringBuilder buffer = new StringBuilder(request.getContentLength());
 		String line = null;
 		BufferedReader reader = request.getReader();
 		while ((line = reader.readLine()) != null) {
