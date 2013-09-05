@@ -11,7 +11,7 @@ The project artifacts are available from Maven Central. The dependency informati
     <dependency>
         <groupId>com.3pillarglobal.labs</groupId>
         <artifactId>spring-integration-aws</artifactId>
-        <version>1.0.0-RELEASE</version>
+        <version>1.1.0-SNAPSHOT</version>
     </dependency>
 
 Demo
@@ -37,7 +37,7 @@ Amazon SQS (Simple Queue Service) is a poll-based, highly available distributed 
    
 **namespace**: `http://www.springframework.org/schema/integration/sqs`
 
-**schemaLocation**: `https://raw.github.com/3pillarlabs/spring-integration-aws/master/src/main/resources/spring/integration/sqs/config/xml/spring-integration-sqs-1.0.xsd`
+**schemaLocation**: `https://raw.github.com/3pillarlabs/spring-integration-aws/master/src/main/resources/spring/integration/sqs/config/xml/spring-integration-sqs-1.1.xsd`
 
 ### Outbound Adapter
 
@@ -115,7 +115,7 @@ Amazon SNS (Simple Notification Service) is a publish subcribe messaging system,
 
 **namespace** : `http://www.springframework.org/schema/integration/sns`
 
-**schemaLocation**: `https://raw.github.com/3pillarlabs/spring-integration-aws/master/src/main/resources/spring/integration/sns/config/xml/spring-integration-sns-1.0.xsd`
+**schemaLocation**: `https://raw.github.com/3pillarlabs/spring-integration-aws/master/src/main/resources/spring/integration/sns/config/xml/spring-integration-sns-1.1.xsd`
 
 ### Outbound Adapter
 
@@ -170,6 +170,21 @@ Minimum XML configuration
 
 It is possible to add SNS subscriptions to the SNS adapters. Information on GitHub wiki to be added soon.
 
+
+### Amazon client configuration
+
+If you wand to overwrite the default connection/transport settings of the Amazon SNS/SQS clients used internally you may specify an additional ClientConfiguration bean:
+
+  <bean id="awsClientConfiguration" class="com.amazonaws.ClientConfiguration">
+    <property name="proxyHost" value="some proxy host"/>
+    <property name="protocol" value="some proxy port"/>
+  </bean>
+  
+this bean can be injected in the respective channel-adapter, channel or gateway beans by setting the property, e.g.:
+   
+   <int-sns:publish-subscribe-channel id="snsChannel" topic-name="topic" aws-client-configuration="awsClientConfiguration">
+     <int-sns:endpoint base-uri="http://www.example.com"/>
+   </int-sns:publish-subscribe-channel>
 
 Reporting Issues
 -----------------
