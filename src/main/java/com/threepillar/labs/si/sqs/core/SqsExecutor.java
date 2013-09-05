@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.amazonaws.ClientConfiguration;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,6 +81,8 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 	private volatile int destroyWaitTime;
 
+    private ClientConfiguration awsClientConfiguration;
+
 	/**
 	 * Constructor.
 	 */
@@ -102,8 +105,12 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 		if (queue == null) {
 			if (sqsClient == null) {
-				sqsClient = new AmazonSQSClient(awsCredentialsProvider);
-			}
+                if (awsClientConfiguration == null) {
+                    sqsClient = new AmazonSQSClient(awsCredentialsProvider);
+                } else {
+                    sqsClient = new AmazonSQSClient(awsCredentialsProvider, awsClientConfiguration);
+                }
+            }
 			if (regionId != null) {
 				sqsClient.setEndpoint(String.format("sqs.%s.amazonaws.com",
 						regionId));
@@ -338,7 +345,13 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		this.queue = queue;
 	}
 
-	@Autowired(required = false)
+    @Autowired(required = false)
+    public void setAwsClientConfiguration(ClientConfiguration awsClientConfiguration) {
+        log.info("Set AWS client configuration to '" + awsClientConfiguration + "'.");
+        this.awsClientConfiguration = awsClientConfiguration;
+    }
+
+    @Autowired(required = false)
 	public void setAwsCredentialsProvider(
 			AWSCredentialsProvider awsCredentialsProvider) {
 		this.awsCredentialsProvider = awsCredentialsProvider;

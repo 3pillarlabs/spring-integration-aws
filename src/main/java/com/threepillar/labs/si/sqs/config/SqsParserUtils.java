@@ -78,6 +78,9 @@ public final class SqsParserUtils {
 		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
 				sqsExecutorBuilder, element, "visibility-timeout");
 
+        IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
+                sqsExecutorBuilder, element, "aws-client-configuration");
+
 		return sqsExecutorBuilder;
 
 	}

@@ -5,7 +5,7 @@
   xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
   xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-1.0.xsd">
+		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-1.1.xsd">
 
   <bean id="testQueue" class="com.threepillar.labs.si.test.support.BlockingQueueFactory" 
       factory-method="createBlockingQueue" />
