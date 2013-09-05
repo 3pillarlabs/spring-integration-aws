@@ -179,7 +179,7 @@ If you want to overwrite the default connection/transport settings of the Amazon
 		<property name="protocol" value="some proxy port"/>
 	</bean>
 		    
-this bean can is injected in the respective channel-adapter, channel or gateway beans and may be explicitly set as property:
+this bean is injected in the respective channel-adapters, channels or gateways or may be explicitly set as property:
    
 	<int-sns:publish-subscribe-channel id="snsChannel" topic-name="topic" aws-client-configuration="awsClientConfiguration">
 		<int-sns:endpoint base-uri="http://www.example.com"/>
