@@ -145,8 +145,8 @@ Minimum XML configuration
 			aws-credentials-provider="bean-ref"
 			channel="out">
 			
-		<int-sns:endpoint base-uri="http://www.example.com/context"/>
-	</int-sns:inbound-channel-adapter>
+		  <int-sns:endpoint base-uri="http://www.example.com/context"/>
+	  </int-sns:inbound-channel-adapter>
 
 1. **endpoint**: specifies the base URL of the web application. This will be used to subscribe a HTTP endpoint to the SNS topic
 
@@ -156,7 +156,6 @@ If your application sends and receives messages from the same SNS topic, you sho
 
 Minimum XML configuration
 
-    
 	<int-sns:publish-subscribe-channel id="channel" 
 			topic-name="top-picks" 
 			aws-credentials-provider="bean-ref">
@@ -173,18 +172,18 @@ It is possible to add SNS subscriptions to the SNS adapters. Information on GitH
 
 ### Amazon client configuration
 
-If you wand to overwrite the default connection/transport settings of the Amazon SNS/SQS clients used internally you may specify an additional ClientConfiguration bean:
+If you want to overwrite the default connection/transport settings of the Amazon SNS/SQS clients used internally you may specify an additional ClientConfiguration bean named `awsClientConfiguration`.
 
-  <bean id="awsClientConfiguration" class="com.amazonaws.ClientConfiguration">
-    <property name="proxyHost" value="some proxy host"/>
-    <property name="protocol" value="some proxy port"/>
-  </bean>
-  
-this bean can be injected in the respective channel-adapter, channel or gateway beans by setting the property, e.g.:
+	<bean id="awsClientConfiguration" class="com.amazonaws.ClientConfiguration">
+		<property name="proxyHost" value="some proxy host"/>
+		<property name="protocol" value="some proxy port"/>
+	</bean>
+		    
+this bean can is injected in the respective channel-adapter, channel or gateway beans and may be explicitly set as property:
    
-   <int-sns:publish-subscribe-channel id="snsChannel" topic-name="topic" aws-client-configuration="awsClientConfiguration">
-     <int-sns:endpoint base-uri="http://www.example.com"/>
-   </int-sns:publish-subscribe-channel>
+	<int-sns:publish-subscribe-channel id="snsChannel" topic-name="topic" aws-client-configuration="awsClientConfiguration">
+		<int-sns:endpoint base-uri="http://www.example.com"/>
+	</int-sns:publish-subscribe-channel>
 
 Reporting Issues
 -----------------
