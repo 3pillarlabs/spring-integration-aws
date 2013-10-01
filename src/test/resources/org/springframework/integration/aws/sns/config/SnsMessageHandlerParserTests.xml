@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:int="http://www.springframework.org/schema/integration"
+  xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
+  xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/integration/sns http://www.springframework.org/schema/integration/sns/spring-integration-sns-1.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <bean id="dummyQueue" class="org.springframework.integration.aws.support.BlockingQueueFactory" 
+      factory-method="createBlockingQueue">
+  </bean>
+
+  <bean id="snsTestProxy" class="org.springframework.integration.aws.support.SnsTestProxyImpl">
+    <property name="queue" ref="dummyQueue"></property>
+  </bean>
+
+  <int:channel id="target" />
+
+  <int-sns:outbound-channel-adapter topic-name="testTopic" id="snsOutboundChannelAdapter"
+      channel="target" sns-test-proxy="snsTestProxy">
+  </int-sns:outbound-channel-adapter>
+
+  <int:channel id="pollableTarget">
+    <int:queue/>
+  </int:channel>
+
+  <int-sns:outbound-channel-adapter topic-name="testTopic" id="snsPollOutboundChannelAdapter"
+      channel="pollableTarget" sns-test-proxy="snsTestProxy">
+      
+    <int:poller fixed-rate="10"></int:poller>
+  </int-sns:outbound-channel-adapter>
+
+</beans>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
+	xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/integration/sns http://www.springframework.org/schema/integration/sns/spring-integration-sns-1.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-1.1.xsd">
+
+  <bean id="dummyQueue" class="org.springframework.integration.aws.support.BlockingQueueFactory" 
+      factory-method="createBlockingQueue">
+  </bean>
+
+	<bean id="snsTestProxy" class="org.springframework.integration.aws.support.SnsTestProxyImpl">
+		<property name="queue" ref="dummyQueue" />
+	</bean>
+	
+	<!-- test will send message to this channel -->
+	<int:channel id="target" />
+
+	<int-sns:outbound-channel-adapter id="snsOutbound" 
+			topic-name="testTopic" 
+			channel="target" 
+			sns-test-proxy="snsTestProxy">
+	
+		<int-sns:subscriptions>
+			<int-sns:sqs queue-id="sqsInbound"/>
+		</int-sns:subscriptions>
+		
+	</int-sns:outbound-channel-adapter>
+
+	<int-sqs:inbound-channel-adapter id="sqsInbound" 
+			queue-name="testQueue" channel="sink" queue="dummyQueue" />
+
+	<!-- channel to recv messages from -->
+	<int:channel id="sink">
+		<int:queue />
+	</int:channel>
+
+</beans>

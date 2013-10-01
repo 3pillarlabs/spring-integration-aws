@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
+       xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+        http://www.springframework.org/schema/integration/sns http://www.springframework.org/schema/integration/sns/spring-integration-sns-1.1.xsd
+		    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <bean id="awsClientConfiguration" class="com.amazonaws.ClientConfiguration">
+    <property name="proxyHost" value="PROXY_HOST"/>
+    <property name="protocol" value="HTTPS"/>
+  </bean>
+
+  <bean id="snsTestProxy" class="org.springframework.integration.aws.support.SnsTestProxyImpl"/>
+
+  <int-sns:publish-subscribe-channel id="snsChannelWithClientConfiguration"
+                                     topic-name="firstTopic"
+                                     sns-test-proxy="snsTestProxy"
+                                     sns-executor-proxy="snsExecutorProxy"
+                                     aws-client-configuration="awsClientConfiguration">
+    <int-sns:endpoint base-uri="http://www.example.com"/>
+  </int-sns:publish-subscribe-channel>
+</beans>

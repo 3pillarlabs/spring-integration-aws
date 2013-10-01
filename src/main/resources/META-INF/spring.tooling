@@ -1,7 +1,7 @@
 # Tooling related information for the integration Sns & Sqs namespace
 http\://www.springframework.org/schema/integration/sns@name=integration Sns Namespace
 http\://www.springframework.org/schema/integration/sns@prefix=int-sns
-http\://www.springframework.org/schema/integration/sns@icon=spring/integration/sns/config/xml/spring-integration-sns.gif
+http\://www.springframework.org/schema/integration/sns@icon=org/springframework/integration/aws/sns/config/spring-integration-sns.gif
 http\://www.springframework.org/schema/integration/sqs@name=integration Sqs Namespace
 http\://www.springframework.org/schema/integration/sqs@prefix=int-sqs
-http\://www.springframework.org/schema/integration/sqs@icon=spring/integration/sqs/config/xml/spring-integration-sqs.gif
+http\://www.springframework.org/schema/integration/sqs@icon=org/springframework/integration/aws/sqs/config/spring-integration-sqs.gif
