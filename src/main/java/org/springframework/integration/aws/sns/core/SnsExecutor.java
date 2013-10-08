@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.Message;
 import org.springframework.integration.aws.MessagePacket;
 import org.springframework.integration.aws.sns.support.SnsTestProxy;
@@ -245,7 +244,6 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	 * 
 	 * @param awsCredentialsProvider
 	 */
-	@Autowired(required = false)
 	public void setAwsCredentialsProvider(
 			AWSCredentialsProvider awsCredentialsProvider) {
 		this.awsCredentialsProvider = awsCredentialsProvider;
@@ -256,7 +254,6 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	 * 
 	 * @param awsClientConfiguration
 	 */
-	@Autowired(required = false)
 	public void setAwsClientConfiguration(
 			ClientConfiguration awsClientConfiguration) {
 		this.awsClientConfiguration = awsClientConfiguration;

@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.Message;
 import org.springframework.integration.aws.MessagePacket;
 import org.springframework.integration.aws.sqs.SqsHeaders;
@@ -351,7 +350,6 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	 * 
 	 * @param awsClientConfiguration
 	 */
-	@Autowired(required = false)
 	public void setAwsClientConfiguration(
 			ClientConfiguration awsClientConfiguration) {
 		this.awsClientConfiguration = awsClientConfiguration;
@@ -362,7 +360,6 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	 * 
 	 * @param awsCredentialsProvider
 	 */
-	@Autowired(required = false)
 	public void setAwsCredentialsProvider(
 			AWSCredentialsProvider awsCredentialsProvider) {
 		this.awsCredentialsProvider = awsCredentialsProvider;

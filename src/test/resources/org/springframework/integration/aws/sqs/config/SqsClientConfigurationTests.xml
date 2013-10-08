@@ -17,5 +17,7 @@
   <bean id="testQueue" class="org.springframework.integration.aws.support.BlockingQueueFactory" 
       factory-method="createBlockingQueue" />
 
-  <int-sqs:channel queue-name="testQueue" id="sqsChannelWithClientConfiguration" queue="testQueue" sqs-executor-proxy="sqsExecutorProxy"/>
+  <int-sqs:channel queue-name="testQueue" id="sqsChannelWithClientConfiguration" 
+  	queue="testQueue" sqs-executor-proxy="sqsExecutorProxy" 
+  	aws-client-configuration="awsClientConfiguration" />
 </beans>
