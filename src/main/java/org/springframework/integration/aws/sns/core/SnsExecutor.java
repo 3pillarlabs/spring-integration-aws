@@ -3,7 +3,6 @@ package org.springframework.integration.aws.sns.core;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.ClientConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -15,6 +14,7 @@ import org.springframework.integration.aws.sns.support.SnsTestProxy;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.util.Assert;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
@@ -46,7 +46,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	private HttpEndpoint httpEndpoint;
 	private List<Subscription> subscriptionList;
 	private Map<String, SqsExecutor> sqsExecutorMap;
-    private ClientConfiguration awsClientConfiguration;
+	private ClientConfiguration awsClientConfiguration;
 
 	/**
 	 * Constructor.
@@ -66,12 +66,13 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 				"Either snsTestProxy or awsCredentialsProvider needs to be provided");
 
 		if (snsTestProxy == null) {
-            if (awsClientConfiguration == null) {
-                client = new AmazonSNSClient(awsCredentialsProvider);
-            } else {
-                client = new AmazonSNSClient(awsCredentialsProvider, awsClientConfiguration);
-            }
-            if (regionId != null) {
+			if (awsClientConfiguration == null) {
+				client = new AmazonSNSClient(awsCredentialsProvider);
+			} else {
+				client = new AmazonSNSClient(awsCredentialsProvider,
+						awsClientConfiguration);
+			}
+			if (regionId != null) {
 				client.setEndpoint(String.format("sns.%s.amazonaws.com",
 						regionId));
 			}
@@ -130,7 +131,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		if (snsUrlSubscriptionArn == null) {
 
 			SubscribeRequest request = new SubscribeRequest(topicArn,
-                    urlSubscription.getProtocol(),
+					urlSubscription.getProtocol(),
 					urlSubscription.getEndpoint());
 			SubscribeResult result = client.subscribe(request);
 			snsUrlSubscriptionArn = result.getSubscriptionArn();
@@ -221,7 +222,8 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	/**
-	 * Set topic name
+	 * Sets topic name
+	 * 
 	 * @param topicName
 	 *            Must not be null
 	 */
@@ -230,7 +232,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	/**
-	 * Set the SnsTestProxy instance for testing without actual AWS.
+	 * Sets the SnsTestProxy instance for testing without actual AWS.
 	 * 
 	 * @param snsTestProxy
 	 */
@@ -238,19 +240,34 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		this.snsTestProxy = snsTestProxy;
 	}
 
+	/**
+	 * Sets the AWS credentials provider.
+	 * 
+	 * @param awsCredentialsProvider
+	 */
 	@Autowired(required = false)
 	public void setAwsCredentialsProvider(
 			AWSCredentialsProvider awsCredentialsProvider) {
 		this.awsCredentialsProvider = awsCredentialsProvider;
 	}
 
-    @Autowired(required = false)
-    public void setAwsClientConfiguration(ClientConfiguration awsClientConfiguration) {
-        log.info("Set AWS client configuration to '" + awsClientConfiguration + "'.");
-        this.awsClientConfiguration = awsClientConfiguration;
-    }
+	/**
+	 * Sets the AWS client configuration.
+	 * 
+	 * @param awsClientConfiguration
+	 */
+	@Autowired(required = false)
+	public void setAwsClientConfiguration(
+			ClientConfiguration awsClientConfiguration) {
+		this.awsClientConfiguration = awsClientConfiguration;
+	}
 
-    public void setRegionId(String regionId) {
+	/**
+	 * Sets the AWS region ID.
+	 * 
+	 * @param regionId
+	 */
+	public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
 

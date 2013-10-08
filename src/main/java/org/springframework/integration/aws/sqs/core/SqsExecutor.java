@@ -8,7 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.amazonaws.ClientConfiguration;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +22,7 @@ import org.springframework.integration.aws.sqs.SqsHeaders;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.policy.Policy;
 import com.amazonaws.auth.policy.Principal;
@@ -81,7 +81,7 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 	private volatile int destroyWaitTime;
 
-    private ClientConfiguration awsClientConfiguration;
+	private ClientConfiguration awsClientConfiguration;
 
 	/**
 	 * Constructor.
@@ -105,12 +105,13 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 		if (queue == null) {
 			if (sqsClient == null) {
-                if (awsClientConfiguration == null) {
-                    sqsClient = new AmazonSQSClient(awsCredentialsProvider);
-                } else {
-                    sqsClient = new AmazonSQSClient(awsCredentialsProvider, awsClientConfiguration);
-                }
-            }
+				if (awsClientConfiguration == null) {
+					sqsClient = new AmazonSQSClient(awsCredentialsProvider);
+				} else {
+					sqsClient = new AmazonSQSClient(awsCredentialsProvider,
+							awsClientConfiguration);
+				}
+			}
 			if (regionId != null) {
 				sqsClient.setEndpoint(String.format("sqs.%s.amazonaws.com",
 						regionId));
@@ -345,13 +346,23 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		this.queue = queue;
 	}
 
-    @Autowired(required = false)
-    public void setAwsClientConfiguration(ClientConfiguration awsClientConfiguration) {
-        log.info("Set AWS client configuration to '" + awsClientConfiguration + "'.");
-        this.awsClientConfiguration = awsClientConfiguration;
-    }
+	/**
+	 * Sets the AWS client configuration.
+	 * 
+	 * @param awsClientConfiguration
+	 */
+	@Autowired(required = false)
+	public void setAwsClientConfiguration(
+			ClientConfiguration awsClientConfiguration) {
+		this.awsClientConfiguration = awsClientConfiguration;
+	}
 
-    @Autowired(required = false)
+	/**
+	 * Sets the AWS credentials provider.
+	 * 
+	 * @param awsCredentialsProvider
+	 */
+	@Autowired(required = false)
 	public void setAwsCredentialsProvider(
 			AWSCredentialsProvider awsCredentialsProvider) {
 		this.awsCredentialsProvider = awsCredentialsProvider;
@@ -361,6 +372,12 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		return receiveMessageWaitTimeout;
 	}
 
+	/**
+	 * Sets the timeout (in seconds) for a receive message operation, defaults
+	 * to {@value #DEFAULT_RECV_MESG_WAIT} seconds.
+	 * 
+	 * @param receiveMessageWaitTimeout
+	 */
 	public void setReceiveMessageWaitTimeout(int receiveMessageWaitTimeout) {
 		Assert.isTrue(receiveMessageWaitTimeout >= 0
 				&& receiveMessageWaitTimeout <= 20,
@@ -368,22 +385,43 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		this.receiveMessageWaitTimeout = receiveMessageWaitTimeout;
 	}
 
+	/**
+	 * Sets the AWS region ID, defaults to us-east.
+	 * 
+	 * @param regionId
+	 */
 	public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
 
+	/**
+	 * Sets the number of messages to prefetch, defaults to
+	 * {@value #DEFAULT_MESSAGE_PREFETCH_COUNT}.
+	 * 
+	 * @param prefetchCount
+	 */
 	public void setPrefetchCount(int prefetchCount) {
 		Assert.isTrue(prefetchCount >= 0 && prefetchCount <= 10,
 				"'prefetchCount' must be an integer from 0 to 10.");
 		this.prefetchCount = prefetchCount;
 	}
 
+	/**
+	 * Sets the message delivery delay from SQS. By default there is no delay.
+	 * 
+	 * @param messageDelay
+	 */
 	public void setMessageDelay(Integer messageDelay) {
 		Assert.isTrue(messageDelay >= 0 && messageDelay <= 900,
 				"'messageDelay' must be an integer from 0 to 900 (15 minutes).");
 		this.messageDelay = messageDelay;
 	}
 
+	/**
+	 * Sets the maximum message size.
+	 * 
+	 * @param maximumMessageSize
+	 */
 	public void setMaximumMessageSize(Integer maximumMessageSize) {
 		Assert.isTrue(
 				maximumMessageSize >= 1024 && maximumMessageSize <= 65536,
@@ -391,6 +429,12 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		this.maximumMessageSize = maximumMessageSize;
 	}
 
+	/**
+	 * Sets the message retention period at SQS. Messages older than this will
+	 * be automatically be dropped by SQS.
+	 * 
+	 * @param messageRetentionPeriod
+	 */
 	public void setMessageRetentionPeriod(Integer messageRetentionPeriod) {
 		Assert.isTrue(
 				messageRetentionPeriod >= 60
@@ -399,6 +443,13 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		this.messageRetentionPeriod = messageRetentionPeriod;
 	}
 
+	/**
+	 * Sets the visibility timeout in seconds. SQS must receive an
+	 * acknowledgment before this timeout occurs or else the message is
+	 * re-delivered.
+	 * 
+	 * @param visibilityTimeout
+	 */
 	public void setVisibilityTimeout(Integer visibilityTimeout) {
 		Assert.isTrue(
 				visibilityTimeout >= 0 && visibilityTimeout <= 43200,
