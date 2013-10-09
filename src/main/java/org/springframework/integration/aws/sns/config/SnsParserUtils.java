@@ -73,10 +73,13 @@ public final class SnsParserUtils {
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(
 				snsExecutorBuilder, element, "region-id");
 
-        IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
-                snsExecutorBuilder, element, "aws-client-configuration");
+		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
+				snsExecutorBuilder, element, "aws-client-configuration");
 
-        return snsExecutorBuilder;
+		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
+				snsExecutorBuilder, element, "message-marshaller");
+
+		return snsExecutorBuilder;
 
 	}
 
@@ -99,10 +102,9 @@ public final class SnsParserUtils {
 			} else {
 				requestPath = String.format("/%s.do", channelAdapterId);
 			}
-			subscriptionList.add(new Subscription()
-					.withEndpoint(baseURI.concat(requestPath))
-					.withProtocol(
-							baseURI.startsWith("https") ? "https" : "http"));
+			subscriptionList.add(new Subscription().withEndpoint(
+					baseURI.concat(requestPath)).withProtocol(
+					baseURI.startsWith("https") ? "https" : "http"));
 
 			// register a HttpEndpoint at this path
 			BeanDefinitionBuilder httpEndpointBuilder = BeanDefinitionBuilder
@@ -131,11 +133,9 @@ public final class SnsParserUtils {
 							uri = uri.concat(childElement
 									.getAttribute("request-path"));
 						}
-						subscriptionList.add(new Subscription()
-								.withEndpoint(uri)
-								.withProtocol(
-										uri.startsWith("https") ? "https" :
-												"http"));
+						subscriptionList.add(new Subscription().withEndpoint(
+								uri).withProtocol(
+								uri.startsWith("https") ? "https" : "http"));
 
 					} else if ("sqs".equals(localName)) {
 						String queueArn = null;
@@ -155,13 +155,12 @@ public final class SnsParserUtils {
 							sqsExecutorMap.put(queueId,
 									new RuntimeBeanReference(sqsBeanName));
 							subscriptionList.add(new Subscription()
-									.withEndpoint(queueId)
-									.withProtocol("sqs"));
+									.withEndpoint(queueId).withProtocol("sqs"));
 
 						} else {
-							subscriptionList.add(new Subscription()
-									.withEndpoint(queueArn)
-									.withProtocol("sqs"));
+							subscriptionList
+									.add(new Subscription().withEndpoint(
+											queueArn).withProtocol("sqs"));
 						}
 					}
 				}

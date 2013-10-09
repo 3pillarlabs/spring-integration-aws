@@ -6,17 +6,18 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.MessageChannel;
-import org.springframework.integration.aws.MessagePacket;
+import org.springframework.integration.aws.JsonMessageMarshaller;
+import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.sns.core.SnsExecutor;
 import org.springframework.integration.channel.AbstractMessageChannel;
 import org.springframework.integration.endpoint.EventDrivenConsumer;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.test.util.TestUtils;
-
 
 /**
  * 
@@ -27,6 +28,7 @@ import org.springframework.integration.test.util.TestUtils;
 public class SnsMessageHandlerParserTests {
 
 	private ConfigurableApplicationContext context;
+	private MessageMarshaller messageMarshaller;
 
 	@Test
 	public void testSnsMessageHandlerParser() throws Exception {
@@ -69,8 +71,8 @@ public class SnsMessageHandlerParserTests {
 		String messageJSON = dummyQueue.poll(100, TimeUnit.MILLISECONDS);
 		assertNotNull(messageJSON);
 
-		MessagePacket packet = MessagePacket.fromJSON(messageJSON);
-		assertEquals(payload, packet.assemble().getPayload());
+		assertEquals(payload, messageMarshaller.deserialize(messageJSON)
+				.getPayload());
 	}
 
 	@Test
@@ -89,8 +91,8 @@ public class SnsMessageHandlerParserTests {
 		String messageJSON = dummyQueue.poll(1000, TimeUnit.MILLISECONDS);
 		assertNotNull(messageJSON);
 
-		MessagePacket packet = MessagePacket.fromJSON(messageJSON);
-		assertEquals(payload, packet.assemble().getPayload());
+		assertEquals(payload, messageMarshaller.deserialize(messageJSON)
+				.getPayload());
 	}
 
 	@Test
@@ -100,6 +102,11 @@ public class SnsMessageHandlerParserTests {
 				"SnsMessageHandlerParserTests.xml", getClass());
 		assertNotNull(context.getBean("snsOutboundChannelAdapter.snsExecutor",
 				SnsExecutor.class));
+	}
+
+	@Before
+	public void setup() {
+		messageMarshaller = new JsonMessageMarshaller();
 	}
 
 	@After

@@ -5,34 +5,44 @@ import static junit.framework.Assert.*;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessageHeaders;
-import org.springframework.integration.aws.MessagePacket;
 import org.springframework.integration.aws.support.TestPojo;
 import org.springframework.integration.support.MessageBuilder;
 
-
 @RunWith(JUnit4.class)
-public class MessagePacketTest {
+public class JsonMessageMarshallerTest {
+
+	private JsonMessageMarshaller marshaller;
+
+	@Before
+	public void setup() {
+		marshaller = new JsonMessageMarshaller();
+	}
 
 	@Test
-	public void testSerialization() {
+	public void testSerialization() throws MessageMarshallerException {
+
 		TestPojo pojo = new TestPojo();
 		pojo.setName("John Doe");
 		pojo.setEmail("user@example.com");
-		MessagePacket packet = new MessagePacket(MessageBuilder.withPayload(
-				pojo).build());
 
-		MessagePacket otherPacket = MessagePacket.fromJSON(packet.toJSON());
-		TestPojo otherPojo = (TestPojo) otherPacket.assemble().getPayload();
+		String json = marshaller.serialize(MessageBuilder.withPayload(pojo)
+				.build());
+
+		TestPojo otherPojo = (TestPojo) marshaller.deserialize(json)
+				.getPayload();
+
 		assertEquals(pojo, otherPojo);
 	}
 
 	@Test
-	public void testMessageHeaders() {
+	public void testMessageHeaders() throws MessageMarshallerException {
+
 		TestPojo pojo = new TestPojo();
 		pojo.setName("John Doe");
 		pojo.setEmail("user@example.com");
@@ -44,10 +54,9 @@ public class MessagePacketTest {
 				.setHeader("fubar", "FUBAR").setHeader("pojo", pojo)
 				.setHeader("ary", ary).build();
 
-		MessagePacket original = new MessagePacket(sent);
+		String original = marshaller.serialize(sent);
 
-		MessagePacket other = MessagePacket.fromJSON(original.toJSON());
-		Message<?> received = other.assemble();
+		Message<?> received = marshaller.deserialize(original);
 
 		assertEquals(sent.getPayload(), received.getPayload());
 		MessageHeaders sentHeaders = sent.getHeaders();
@@ -67,32 +76,34 @@ public class MessagePacketTest {
 	}
 
 	@Test
-	public void testPrimitivesPayload() {
+	public void testPrimitivesPayload() throws MessageMarshallerException {
 
 		Integer i = new Integer(1);
-		MessagePacket packet = new MessagePacket(MessageBuilder.withPayload(i)
+		String packet = marshaller.serialize(MessageBuilder.withPayload(i)
 				.build());
-		MessagePacket otherPacket = MessagePacket.fromJSON(packet.toJSON());
-		Integer j = (Integer) otherPacket.assemble().getPayload();
+
+		Message<?> recvd = marshaller.deserialize(packet);
+		Integer j = (Integer) recvd.getPayload();
 
 		assertEquals(i, j);
 	}
 
 	@Test
-	public void testArrayofPrimitivesPayload() {
+	public void testArrayofPrimitivesPayload()
+			throws MessageMarshallerException {
 
 		Integer[] aryIn = new Integer[] { 1, 2 };
 
-		MessagePacket packet = new MessagePacket(MessageBuilder.withPayload(
-				aryIn).build());
-		MessagePacket otherPacket = MessagePacket.fromJSON(packet.toJSON());
-		Integer[] aryOut = (Integer[]) otherPacket.assemble().getPayload();
+		String packet = marshaller.serialize(MessageBuilder.withPayload(aryIn)
+				.build());
+		Message<?> otherPacket = marshaller.deserialize(packet);
+		Integer[] aryOut = (Integer[]) otherPacket.getPayload();
 
 		assertTrue(Arrays.deepEquals(aryIn, aryOut));
 	}
 
 	@Test
-	public void testArrayOfPojo() {
+	public void testArrayOfPojo() throws MessageMarshallerException {
 
 		TestPojo[] aryIn = new TestPojo[2];
 		aryIn[0] = new TestPojo();
@@ -102,23 +113,23 @@ public class MessagePacketTest {
 		aryIn[1].setName("Lionel Messi");
 		aryIn[1].setEmail("messi@example.com");
 
-		MessagePacket packet = new MessagePacket(MessageBuilder.withPayload(
-				aryIn).build());
-		MessagePacket otherPacket = MessagePacket.fromJSON(packet.toJSON());
+		String packet = marshaller.serialize(MessageBuilder.withPayload(aryIn)
+				.build());
+		Message<?> otherPacket = marshaller.deserialize(packet);
 
-		TestPojo[] aryOut = (TestPojo[]) otherPacket.assemble().getPayload();
+		TestPojo[] aryOut = (TestPojo[]) otherPacket.getPayload();
 
 		assertTrue(Arrays.deepEquals(aryIn, aryOut));
 
 	}
 
 	@Test
-	public void testSimpleMessage() {
+	public void testSimpleMessage() throws MessageMarshallerException {
 
 		String simpleMessage = "Hello World";
-		MessagePacket packet = MessagePacket.fromJSON(simpleMessage);
+		Message<?> packet = marshaller.deserialize(simpleMessage);
 
-		assertEquals(simpleMessage, packet.assemble().getPayload());
+		assertEquals(simpleMessage, packet.getPayload());
 	}
 
 }

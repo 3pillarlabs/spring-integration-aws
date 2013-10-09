@@ -8,7 +8,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessagingException;
-import org.springframework.integration.aws.MessagePacket;
+import org.springframework.integration.aws.JsonMessageMarshaller;
+import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.sns.core.SnsExecutor;
 import org.springframework.integration.aws.sns.support.SnsTestProxy;
 import org.springframework.integration.aws.support.SnsTestProxyImpl;
@@ -18,7 +19,6 @@ import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.core.MessageProducer;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.test.util.TestUtils;
-
 
 /**
  * @author Sayantam Dey
@@ -30,6 +30,7 @@ public class SnsInboundChannelAdapterParserTests {
 	private ConfigurableApplicationContext context;
 	private MessageProducer producer;
 	private Object recvPayload;
+	private MessageMarshaller messageMarshaller;
 
 	@Test
 	public void testSnsInboundChannelAdapterParser() throws Exception {
@@ -84,8 +85,7 @@ public class SnsInboundChannelAdapterParserTests {
 
 		String payload = "Hello, World";
 		Message<?> message = MessageBuilder.withPayload(payload).build();
-		MessagePacket packet = new MessagePacket(message);
-		snsTestProxy.dispatchMessage(packet.toJSON());
+		snsTestProxy.dispatchMessage(messageMarshaller.serialize(message));
 		Thread.sleep(1000);
 
 		assertNotNull(recvPayload);
@@ -102,6 +102,7 @@ public class SnsInboundChannelAdapterParserTests {
 	public void setUp(String name, Class<?> cls, String consumerId) {
 		context = new ClassPathXmlApplicationContext(name, cls);
 		producer = this.context.getBean(consumerId, MessageProducer.class);
+		messageMarshaller = new JsonMessageMarshaller();
 	}
 
 }

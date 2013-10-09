@@ -7,11 +7,14 @@ import static org.mockito.Mockito.*;
 import java.util.Collections;
 
 import org.apache.commons.codec.binary.Hex;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.integration.Message;
-import org.springframework.integration.aws.MessagePacket;
+import org.springframework.integration.aws.JsonMessageMarshaller;
+import org.springframework.integration.aws.MessageMarshaller;
+import org.springframework.integration.aws.MessageMarshallerException;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.integration.support.MessageBuilder;
 
@@ -23,8 +26,15 @@ import com.amazonaws.util.Md5Utils;
 @RunWith(JUnit4.class)
 public class SqsExecutorTest {
 
+	private MessageMarshaller messageMarshaller;
+
+	@Before
+	public void setup() {
+		messageMarshaller = new JsonMessageMarshaller();
+	}
+
 	@Test
-	public void incorrectMD5Test() {
+	public void incorrectMD5Test() throws MessageMarshallerException {
 
 		AmazonSQS mockSQS = mock(AmazonSQS.class);
 
@@ -32,9 +42,8 @@ public class SqsExecutorTest {
 		executor.setSqsClient(mockSQS);
 
 		String payload = "Hello, World";
-		MessagePacket packet = new MessagePacket(MessageBuilder.withPayload(
-				payload).build());
-		String messageBody = packet.toJSON();
+		String messageBody = messageMarshaller.serialize(MessageBuilder
+				.withPayload(payload).build());
 		com.amazonaws.services.sqs.model.Message sqsMessage = new com.amazonaws.services.sqs.model.Message();
 		sqsMessage.setBody(messageBody);
 		sqsMessage.setMD5OfBody(messageBody);
@@ -57,9 +66,8 @@ public class SqsExecutorTest {
 		executor.setSqsClient(mockSQS);
 
 		String payload = "Hello, World";
-		MessagePacket packet = new MessagePacket(MessageBuilder.withPayload(
-				payload).build());
-		String messageBody = packet.toJSON();
+		String messageBody = messageMarshaller.serialize(MessageBuilder
+				.withPayload(payload).build());
 		com.amazonaws.services.sqs.model.Message sqsMessage = new com.amazonaws.services.sqs.model.Message();
 		sqsMessage.setBody(messageBody);
 		sqsMessage.setMD5OfBody(new String(Hex.encodeHex(Md5Utils
@@ -72,10 +80,9 @@ public class SqsExecutorTest {
 
 		Message<?> recvMessage = executor.poll();
 		assertNotNull("message is not null", recvMessage);
-		MessagePacket recvPacket = MessagePacket.fromJSON((String) recvMessage
-				.getPayload());
 
-		Message<?> enclosed = recvPacket.assemble();
+		Message<?> enclosed = messageMarshaller
+				.deserialize((String) recvMessage.getPayload());
 		String recvPayload = (String) enclosed.getPayload();
 		assertEquals("payload must match", payload, recvPayload);
 	}

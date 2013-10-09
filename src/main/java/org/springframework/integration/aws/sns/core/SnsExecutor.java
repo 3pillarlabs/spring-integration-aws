@@ -8,7 +8,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.Message;
-import org.springframework.integration.aws.MessagePacket;
+import org.springframework.integration.MessagingException;
+import org.springframework.integration.aws.JsonMessageMarshaller;
+import org.springframework.integration.aws.MessageMarshaller;
+import org.springframework.integration.aws.MessageMarshallerException;
 import org.springframework.integration.aws.sns.support.SnsTestProxy;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.util.Assert;
@@ -46,12 +49,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	private List<Subscription> subscriptionList;
 	private Map<String, SqsExecutor> sqsExecutorMap;
 	private ClientConfiguration awsClientConfiguration;
-
-	/**
-	 * Constructor.
-	 */
-	public SnsExecutor() {
-	}
+	private MessageMarshaller messageMarshaller;
 
 	/**
 	 * Verifies and sets the parameters. E.g. initializes the to be used
@@ -63,6 +61,10 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 
 		Assert.isTrue(snsTestProxy != null || awsCredentialsProvider != null,
 				"Either snsTestProxy or awsCredentialsProvider needs to be provided");
+
+		if (messageMarshaller == null) {
+			messageMarshaller = new JsonMessageMarshaller();
+		}
 
 		if (snsTestProxy == null) {
 			if (awsClientConfiguration == null) {
@@ -189,18 +191,25 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	 */
 	public Object executeOutboundOperation(final Message<?> message) {
 
-		MessagePacket packet = new MessagePacket(message);
-		if (snsTestProxy == null) {
-			PublishRequest request = new PublishRequest();
-			PublishResult result = client.publish(request
-					.withTopicArn(topicArn).withMessage(packet.toJSON()));
-			log.debug("Published message to topic: " + result.getMessageId());
-		} else {
-			snsTestProxy.dispatchMessage(packet.toJSON());
+		try {
+			String serializedMessage = messageMarshaller.serialize(message);
+
+			if (snsTestProxy == null) {
+				PublishRequest request = new PublishRequest();
+				PublishResult result = client.publish(request.withTopicArn(
+						topicArn).withMessage(serializedMessage));
+				log.debug("Published message to topic: "
+						+ result.getMessageId());
+			} else {
+				snsTestProxy.dispatchMessage(serializedMessage);
+			}
+
+		} catch (MessageMarshallerException e) {
+			log.error(e.getMessage(), e);
+			throw new MessagingException(e.getMessage(), e.getCause());
 		}
 
 		return message.getPayload();
-
 	}
 
 	public void registerHandler(NotificationHandler notificationHandler) {
@@ -209,6 +218,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		Assert.notNull(notificationHandler,
 				"'notificationHandler' must not be null");
 
+		notificationHandler.setMessageMarshaller(messageMarshaller);
 		httpEndpoint.setNotificationHandler(notificationHandler);
 		if (snsTestProxy != null) {
 			snsTestProxy.setHttpEndpoint(httpEndpoint);
@@ -278,6 +288,10 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 
 	public void setSqsExecutorMap(Map<String, SqsExecutor> sqsExecutorMap) {
 		this.sqsExecutorMap = sqsExecutorMap;
+	}
+
+	public void setMessageMarshaller(MessageMarshaller messageMarshaller) {
+		this.messageMarshaller = messageMarshaller;
 	}
 
 	@Override

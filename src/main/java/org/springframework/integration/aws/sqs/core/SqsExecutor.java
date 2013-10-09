@@ -16,7 +16,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.Message;
-import org.springframework.integration.aws.MessagePacket;
+import org.springframework.integration.MessagingException;
+import org.springframework.integration.aws.JsonMessageMarshaller;
+import org.springframework.integration.aws.MessageMarshaller;
+import org.springframework.integration.aws.MessageMarshallerException;
 import org.springframework.integration.aws.sqs.SqsHeaders;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
@@ -77,10 +80,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	private Integer maximumMessageSize;
 	private Integer messageRetentionPeriod;
 	private Integer visibilityTimeout;
+	private ClientConfiguration awsClientConfiguration;
+	private MessageMarshaller messageMarshaller;
 
 	private volatile int destroyWaitTime;
-
-	private ClientConfiguration awsClientConfiguration;
 
 	/**
 	 * Constructor.
@@ -101,6 +104,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		Assert.hasText(this.queueName, "queueName must not be empty.");
 		Assert.isTrue(queue != null || awsCredentialsProvider != null,
 				"Either queue or awsCredentialsProvider needs to be provided");
+
+		if (messageMarshaller == null) {
+			messageMarshaller = new JsonMessageMarshaller();
+		}
 
 		if (queue == null) {
 			if (sqsClient == null) {
@@ -171,18 +178,22 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	 */
 	public Object executeOutboundOperation(final Message<?> message) {
 
-		MessagePacket packet = new MessagePacket(message);
-		if (queue == null) {
-			SendMessageRequest request = new SendMessageRequest(queueUrl,
-					packet.toJSON());
-			SendMessageResult result = sqsClient.sendMessage(request);
-			log.debug("Message sent, Id:" + result.getMessageId());
-		} else {
-			queue.add(packet.toJSON());
+		try {
+			String serializedMessage = messageMarshaller.serialize(message);
+			if (queue == null) {
+				SendMessageRequest request = new SendMessageRequest(queueUrl,
+						serializedMessage);
+				SendMessageResult result = sqsClient.sendMessage(request);
+				log.debug("Message sent, Id:" + result.getMessageId());
+			} else {
+				queue.add(serializedMessage);
+			}
+		} catch (MessageMarshallerException e) {
+			log.error(e.getMessage(), e);
+			throw new MessagingException(e.getMessage(), e.getCause());
 		}
 
 		return message.getPayload();
-
 	}
 
 	/**
@@ -258,9 +269,15 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 					payloadJSON = qMessageJSON.getString(SNS_MESSAGE_KEY);
 					// XXX: other SNS attributes?
 				}
-				MessagePacket packet = MessagePacket.fromJSON(payloadJSON);
-				MessageBuilder<?> builder = MessageBuilder.fromMessage(packet
-						.assemble());
+				Message<?> packet = null;
+				try {
+					packet = messageMarshaller.deserialize(payloadJSON);
+				} catch (MessageMarshallerException marshallingException) {
+					throw new MessagingException(
+							marshallingException.getMessage(),
+							marshallingException.getCause());
+				}
+				MessageBuilder<?> builder = MessageBuilder.fromMessage(packet);
 				if (qMessage != null) {
 					builder.setHeader(SqsHeaders.MSG_RECEIPT_HANDLE,
 							qMessage.getReceiptHandle());
@@ -515,6 +532,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 	public void setSqsClient(AmazonSQS sqsClient) {
 		this.sqsClient = sqsClient;
+	}
+
+	public void setMessageMarshaller(MessageMarshaller messageMarshaller) {
+		this.messageMarshaller = messageMarshaller;
 	}
 
 }

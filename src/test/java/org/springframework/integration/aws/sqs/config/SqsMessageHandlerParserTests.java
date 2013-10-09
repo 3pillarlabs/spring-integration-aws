@@ -10,13 +10,13 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.MessageChannel;
-import org.springframework.integration.aws.MessagePacket;
+import org.springframework.integration.aws.JsonMessageMarshaller;
+import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.integration.channel.AbstractMessageChannel;
 import org.springframework.integration.endpoint.EventDrivenConsumer;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.test.util.TestUtils;
-
 
 /**
  * 
@@ -27,7 +27,7 @@ import org.springframework.integration.test.util.TestUtils;
 public class SqsMessageHandlerParserTests {
 
 	private ConfigurableApplicationContext context;
-
+	private MessageMarshaller messageMarshaller;
 	private EventDrivenConsumer consumer;
 
 	@Test
@@ -79,11 +79,10 @@ public class SqsMessageHandlerParserTests {
 		String outputMessage = outputQueue.poll(5, TimeUnit.SECONDS);
 		assertNotNull("outputMessage is not null", outputMessage);
 
-		String payload = (String) MessagePacket.fromJSON(outputMessage)
-				.assemble().getPayload();
+		String payload = (String) messageMarshaller.deserialize(outputMessage)
+				.getPayload();
 
 		assertTrue("payload equals message", payload.equals(inputMessage));
-
 	}
 
 	@After
@@ -97,6 +96,7 @@ public class SqsMessageHandlerParserTests {
 		context = new ClassPathXmlApplicationContext(name, cls);
 		consumer = this.context.getBean("sqsOutboundChannelAdapter",
 				EventDrivenConsumer.class);
+		messageMarshaller = new JsonMessageMarshaller();
 	}
 
 }

@@ -10,7 +10,6 @@ import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.springframework.util.Assert;
 import org.w3c.dom.Element;
 
-
 /**
  * Contains various utility methods for parsing Sqs Adapter specific namesspace
  * elements as well as for the generation of the the respective
@@ -78,8 +77,11 @@ public final class SqsParserUtils {
 		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
 				sqsExecutorBuilder, element, "visibility-timeout");
 
-        IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
-                sqsExecutorBuilder, element, "aws-client-configuration");
+		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
+				sqsExecutorBuilder, element, "aws-client-configuration");
+
+		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
+				sqsExecutorBuilder, element, "message-marshaller");
 
 		return sqsExecutorBuilder;
 

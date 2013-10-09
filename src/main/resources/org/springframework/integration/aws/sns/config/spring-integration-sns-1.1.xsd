@@ -264,12 +264,27 @@
     </xsd:attribute>
     <xsd:attribute name="sns-executor-proxy" type="xsd:string">
       <xsd:annotation>
-        <xsd:documentation>
-          Bean name for an instance of com.threepillar.labs.si.sns.SnsExecutorProxy which
+        <xsd:documentation><![CDATA[
+          Bean referenace to an instance of com.threepillar.labs.si.sns.SnsExecutorProxy which
           will be auto-created. You can use this bean to query for generated SNS attributes
           such as topic ARN.
+          ]]>
         </xsd:documentation>
       </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="message-marshaller" type="xsd:string">
+    	<xsd:annotation>
+    		<xsd:documentation><![CDATA[
+    		Bean reference to org.springframework.integration.aws.MessageMarshaller
+    		implementation.
+    		]]>
+    		</xsd:documentation>
+    		<xsd:appinfo>
+    			<tool:annotation kind="ref">
+    				<tool:assignable-to type="org.springframework.integration.aws.MessageMarshaller"/>
+    			</tool:annotation>
+    		</xsd:appinfo>
+    	</xsd:annotation>
     </xsd:attribute>
   </xsd:attributeGroup>
 

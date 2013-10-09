@@ -261,6 +261,20 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
+    <xsd:attribute name="message-marshaller" type="xsd:string">
+    	<xsd:annotation>
+    		<xsd:documentation><![CDATA[
+    		Bean reference to org.springframework.integration.aws.MessageMarshaller
+    		implementation.
+    		]]>
+    		</xsd:documentation>
+    		<xsd:appinfo>
+    			<tool:annotation kind="ref">
+    				<tool:assignable-to type="org.springframework.integration.aws.MessageMarshaller"/>
+    			</tool:annotation>
+    		</xsd:appinfo>
+    	</xsd:annotation>
+    </xsd:attribute>
   </xsd:attributeGroup>
 
 	<xsd:attributeGroup name="inboundTypeAttributes">

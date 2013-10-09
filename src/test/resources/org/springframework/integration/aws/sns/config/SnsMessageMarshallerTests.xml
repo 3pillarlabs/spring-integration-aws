@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/integration/sns http://www.springframework.org/schema/integration/sns/spring-integration-sns-1.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+
+  <bean id="dummyQueue" class="org.springframework.integration.aws.support.BlockingQueueFactory" 
+      factory-method="createBlockingQueue">
+  </bean>
+
+  <bean id="snsTestProxy" class="org.springframework.integration.aws.support.SnsTestProxyImpl">
+    <property name="queue" ref="dummyQueue"></property>
+  </bean>
+
+	<bean id="dummyMessageMarshaller" class="org.springframework.integration.aws.support.TestMessageMarshaller" />
+
+	<int:channel id="target" />
+
+	<int-sns:inbound-channel-adapter topic-name="dummy" id="snsInbound" 
+			channel="target"
+			sns-test-proxy="snsTestProxy" message-marshaller="dummyMessageMarshaller">
+	
+		<int-sns:endpoint base-uri="http://www.example.com"/>
+	</int-sns:inbound-channel-adapter>	
+
+	<int-sns:outbound-channel-adapter topic-name="dummy" id="snsOutbound"
+		channel="target" 
+		message-marshaller="dummyMessageMarshaller" sns-test-proxy="snsTestProxy" />
+
+	<int-sns:outbound-gateway topic-name="dummy" id="snsGateway" channel="target" 
+		message-marshaller="dummyMessageMarshaller" sns-test-proxy="snsTestProxy" />
+
+	<int-sns:publish-subscribe-channel topic-name="dummy" id="snsChannel"
+			message-marshaller="dummyMessageMarshaller" sns-test-proxy="snsTestProxy">
+	
+		<int-sns:endpoint base-uri="http://www.example.com" />
+	</int-sns:publish-subscribe-channel>
+
+</beans>
