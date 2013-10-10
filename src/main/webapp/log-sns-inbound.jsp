@@ -14,23 +14,21 @@
       the read-only text area.
     </blockquote>
     <pre><code lang="xml">
-&lt;!-- SNS Inbound --&gt;
-&lt;int-sns:inbound-channel-adapter id="snsInboundAdapter"
-    topic-name="snsInboundTopic"
-    channel="logSnsInbound" 
-    http-endpoint-path="/aws/sns/inbound.do"
-    aws-credentials-provider="awsCredentialsProvider" 
-    sns-executor-proxy="snsInboundAdapterProxy"&gt;
+  &lt;!-- SNS Inbound --&gt;
+  &lt;int-sns:inbound-channel-adapter id="snsInboundAdapter"
+      topic-name="snsInboundTopic"
+      channel="logSnsInbound" 
+      aws-credentials-provider="awsCredentialsProvider" 
+      sns-executor-proxy="snsInboundAdapterProxy"&gt;
     
-  &lt;int-sns:subscriptions&gt;
-    &lt;int-sns:subscription protocol="http" endpoint="http://203.122.33.232:80/si-aws-sns-sample"/&gt;
-  &lt;/int-sns:subscriptions&gt;
-&lt;/int-sns:inbound-channel-adapter&gt;
+    &lt;int-sns:endpoint base-uri="http://labs.3pillarglobal.com/spring-integration-aws-demo" /&gt;  
+  &lt;/int-sns:inbound-channel-adapter&gt;
+  
+  &lt;int:publish-subscribe-channel id="logSnsInbound" /&gt;
 
-&lt;int:channel id="logSnsInbound" /&gt;
-
-&lt;bean id="snsInboundMessageHandler" 
-    class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" /&gt;
+  &lt;bean id="snsInboundMessageHandler" 
+      class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" 
+      scope="prototype" /&gt;
     </code></pre>
   </section>
   <section class="one-half">

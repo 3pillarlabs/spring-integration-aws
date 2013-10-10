@@ -13,21 +13,20 @@
       and the subscribers display the message.  
       </blockquote>
       <pre><code>
-&lt;!-- SNS channel  --&gt;
-&lt;int-sns:publish-subscribe-channel id="snsChannel" 
-    topic-name="snsChannelTopic"
-    aws-credentials-provider="awsCredentialsProvider"
-    http-endpoint-path="/aws/sns/channel.do"&gt;
+  &lt;!-- SNS channel  --&gt;
+  &lt;int-sns:publish-subscribe-channel id="snsChannel" 
+      topic-name="snsChannelTopic"
+      aws-credentials-provider="awsCredentialsProvider"&gt;
+  
+  	&lt;int-sns:endpoint base-uri="http://labs.3pillarglobal.com/spring-integration-aws-demo" /&gt;
+  &lt;/int-sns:publish-subscribe-channel&gt;
 
-  &lt;int-sns:subscriptions&gt;
-    &lt;int-sns:subscription protocol="http" endpoint="http://203.122.33.232:80/si-aws-sns-sample"/&gt;
-  &lt;/int-sns:subscriptions&gt;    
-&lt;/int-sns:publish-subscribe-channel&gt;
-
-&lt;bean id="snsChannelSubscriberA" 
-    class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" /&gt;
-&lt;bean id="snsChannelSubscriberB" 
-    class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler" /&gt;
+  &lt;bean id="snsChannelSubscriberA" 
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler"
+      scope="prototype" /&gt;
+  &lt;bean id="snsChannelSubscriberB" 
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler"
+      scope="prototype" /&gt;
       </code></pre>
     </section>
 

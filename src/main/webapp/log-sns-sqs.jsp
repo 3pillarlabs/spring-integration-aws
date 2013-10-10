@@ -13,28 +13,29 @@
       in the text area.  
       </blockquote>
       <pre><code>
-&lt;!-- SNS outbound -&gt; SQS  --&gt;
-&lt;int:channel id="logSnsOutbound" /&gt;
-
-&lt;int-sns:outbound-channel-adapter id="snsOutbound" 
-    topic-name="snsOutboundTopic" 
-    aws-credentials-provider="awsCredentialsProvider"
-    channel="logSnsOutbound"&gt;
+  &lt;!-- SNS outbound -&gt; SQS  --&gt;
+  &lt;int:channel id="logSnsOutbound" /&gt;
+  
+  &lt;int-sns:outbound-channel-adapter id="snsOutbound" 
+      topic-name="snsOutboundTopic" 
+      aws-credentials-provider="awsCredentialsProvider"
+      channel="logSnsOutbound"&gt;
     
-  &lt;int-sns:subscriptions&gt;
-    &lt;int-sns:subscription protocol="sqs" endpoint="sqsInbound"/&gt;
-  &lt;/int-sns:subscriptions&gt;  
-&lt;/int-sns:outbound-channel-adapter&gt;
+    &lt;int-sns:subscriptions&gt;
+    	&lt;int-sns:sqs queue-id="sqsInbound"/&gt;
+    &lt;/int-sns:subscriptions&gt;  
+  &lt;/int-sns:outbound-channel-adapter&gt;
 
-&lt;int-sqs:inbound-channel-adapter id="sqsInbound" 
-    queue-name="sqsInboundQueue" 
-    aws-credentials-provider="awsCredentialsProvider"
-    channel="logSqsInbound" /&gt;
-    
-&lt;int:channel id="logSqsInbound" /&gt;
-
-&lt;bean id="snsSqsMessageHandler" 
-    class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler" /&gt;
+  &lt;int-sqs:inbound-channel-adapter id="sqsInbound" 
+      queue-name="sqsInboundQueue" 
+      aws-credentials-provider="awsCredentialsProvider"
+      channel="logSqsInbound" /&gt;
+      
+  &lt;int:publish-subscribe-channel id="logSqsInbound" /&gt;
+  
+  &lt;bean id="snsSqsMessageHandler" 
+      class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler"
+      scope="prototype" /&gt;
       </code></pre>
     </section>
     
