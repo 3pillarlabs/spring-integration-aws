@@ -27,19 +27,22 @@ import com.amazonaws.util.Md5Utils;
 public class SqsExecutorTest {
 
 	private MessageMarshaller messageMarshaller;
+	private static AmazonSQS mockSQS = null;
+	private SqsExecutor executor;
 
 	@Before
 	public void setup() {
 		messageMarshaller = new JsonMessageMarshaller();
+		if (mockSQS == null) {
+			mockSQS = mock(AmazonSQS.class);
+		}
+		executor = new SqsExecutor();
+		executor.setSqsClient(mockSQS);
+		executor.setMessageMarshaller(messageMarshaller);
 	}
 
 	@Test
 	public void incorrectMD5Test() throws MessageMarshallerException {
-
-		AmazonSQS mockSQS = mock(AmazonSQS.class);
-
-		SqsExecutor executor = new SqsExecutor();
-		executor.setSqsClient(mockSQS);
 
 		String payload = "Hello, World";
 		String messageBody = messageMarshaller.serialize(MessageBuilder
@@ -59,11 +62,6 @@ public class SqsExecutorTest {
 
 	@Test
 	public void correctMD5Test() throws Exception {
-
-		AmazonSQS mockSQS = mock(AmazonSQS.class);
-
-		SqsExecutor executor = new SqsExecutor();
-		executor.setSqsClient(mockSQS);
 
 		String payload = "Hello, World";
 		String messageBody = messageMarshaller.serialize(MessageBuilder
