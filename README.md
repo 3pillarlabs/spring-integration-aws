@@ -11,7 +11,7 @@ The project artifacts are available from Maven Central. The dependency informati
     <dependency>
         <groupId>com.3pillarglobal.labs</groupId>
         <artifactId>spring-integration-aws</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.1</version>
     </dependency>
 
 Demo
