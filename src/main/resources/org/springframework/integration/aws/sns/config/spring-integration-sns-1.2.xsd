@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.springframework.org/schema/integration/sns"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:tool="http://www.springframework.org/schema/tool"
+  xmlns:integration="http://www.springframework.org/schema/integration"
+  targetNamespace="http://www.springframework.org/schema/integration/sns"
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xsd:import namespace="http://www.springframework.org/schema/beans" 
+  	schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
+  <xsd:import namespace="http://www.springframework.org/schema/tool" />
+  <xsd:import namespace="http://www.springframework.org/schema/integration"
+    schemaLocation="http://www.springframework.org/schema/integration/spring-integration-2.2.xsd" />
+
+  <xsd:annotation>
+    <xsd:documentation><![CDATA[
+		Defines the configuration elements for the Spring Integration
+		SNS Adapter.
+		]]></xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="inbound-channel-adapter">
+    <xsd:annotation>
+      <xsd:documentation>
+        The definition for the Spring Integration SNS
+        Inbound Channel Adapter. Always message-driven (subscribable).
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="endpoint" type="httpSubscriptionType" minOccurs="1" maxOccurs="1">
+        	<xsd:annotation>
+        		<xsd:documentation><![CDATA[
+        		HTTP endpoint information for incoming SNS messages
+        		]]></xsd:documentation>
+        	</xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="snsInboundAttributes" />
+      <xsd:attributeGroup ref="integration:channelAdapterAttributes" />
+      <xsd:attribute name="send-timeout" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation><![CDATA[
+			Allows you to specify how long this inbound-channel-adapter
+			will wait for the message (containing the retrieved entities)
+			to be sent successfully to the message channel, before throwing
+			an exception.
+
+			Keep in mind that when sending to a DirectChannel, the
+			invocation will occur in the sender's thread so the failing
+			of the send operation may be caused by other components
+			further downstream. By default the Inbound Channel Adapter
+			will wait indefinitely. The value is specified in milliseconds.
+			]]>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="outbound-channel-adapter">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines an outbound Channel Adapter to SNS.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+    	<xsd:complexContent>
+    		<xsd:extension base="snsOutboundType"/>
+    	</xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="outbound-gateway">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines the Spring Integration Sns Outbound Gateway
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+    	<xsd:complexContent>
+    		<xsd:extension base="snsOutboundType">
+		      <xsd:attribute name="reply-channel" type="xsd:string">
+		        <xsd:annotation>
+		          <xsd:documentation>
+		            Message Channel to which replies should be
+		            sent, after receiving the database response.
+		          </xsd:documentation>
+		          <xsd:appinfo>
+		            <tool:annotation kind="ref">
+		              <tool:expected-type
+		                type="org.springframework.integration.core.MessageChannel" />
+		            </tool:annotation>
+		          </xsd:appinfo>
+		        </xsd:annotation>
+		      </xsd:attribute>
+		      <xsd:attribute name="reply-timeout" type="xsd:string">
+		        <xsd:annotation>
+		          <xsd:documentation><![CDATA[
+		            Allows you to specify how long this gateway will wait for
+		            the reply message to be sent successfully before throwing
+		            an exception. Keep in mind that when sending to a
+		            DirectChannel, the invocation will occur in the sender's thread
+		            so the failing of the send operation may be caused by other
+		            components further downstream. By default the Gateway will
+		            wait indefinitely. The value is specified in milliseconds.
+		            ]]>
+		          </xsd:documentation>
+		        </xsd:annotation>
+		      </xsd:attribute>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="publish-subscribe-channel">
+    <xsd:annotation>
+      <xsd:documentation>
+	Creates a publish-subscribe-channel that is backed by a SNS topic exchange.
+	Always message-driven (subscribable).
+      </xsd:documentation>
+      <xsd:appinfo>
+        <tool:annotation>
+          <tool:exports type="org.springframework.integration.core.SubscribableChannel" />
+        </tool:annotation>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+    	<xsd:complexContent>
+    		<xsd:extension base="integration:channelType">
+		      <xsd:sequence>
+		        <xsd:element name="endpoint" type="httpSubscriptionType" minOccurs="1" maxOccurs="1">
+		        	<xsd:annotation>
+		        		<xsd:documentation><![CDATA[
+		        		HTTP endpoint information for incoming SNS messages
+		        		]]></xsd:documentation>
+		        	</xsd:annotation>
+		        </xsd:element>
+		        <xsd:element name="subscriptions" minOccurs="0" maxOccurs="1" type="subscriptionsType">
+		        	<xsd:annotation>
+		        		<xsd:documentation><![CDATA[
+		        		A list of subscriptions to the SNS topics.
+		        		]]></xsd:documentation>
+		        	</xsd:annotation>
+		        </xsd:element>
+		        <xsd:element name="interceptors" type="integration:channelInterceptorsType" minOccurs="0" maxOccurs="1">
+		          <xsd:annotation>
+		            <xsd:documentation><![CDATA[
+		    A list of ChannelInterceptor instances to be applied to this channel.
+		            ]]></xsd:documentation>
+		          </xsd:annotation>
+		        </xsd:element>
+		      </xsd:sequence>
+		      <xsd:attributeGroup ref="snsInboundAttributes" />
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+ 	<xsd:complexType name="subscriptionsType">
+ 		<xsd:sequence>
+ 			<xsd:element name="http" type="httpSubscriptionType" minOccurs="0" maxOccurs="unbounded">
+ 				<xsd:annotation>
+ 					<xsd:documentation><![CDATA[
+		URL destination for outbound messages. The URLs can be either internal application
+		URLs for external URLs.
+		]]></xsd:documentation>
+ 				</xsd:annotation>
+ 			</xsd:element>
+ 			<xsd:element name="sqs" type="sqsSubscriptionType" minOccurs="0" maxOccurs="unbounded">
+ 				<xsd:annotation>
+ 					<xsd:documentation><![CDATA[
+		SQS destination for outbound messages. The SQS queues must exist, the subscription
+		and permission will be created if they do not exist.
+		]]></xsd:documentation>
+ 				</xsd:annotation>
+ 			</xsd:element>
+ 		</xsd:sequence>
+ 	</xsd:complexType>
+
+	<xsd:complexType name="snsOutboundType">
+	  <xsd:sequence>
+      <xsd:element name="subscriptions" minOccurs="0" maxOccurs="1" type="subscriptionsType">
+      	<xsd:annotation>
+      		<xsd:documentation><![CDATA[
+      		A list of subscriptions to the SNS topics.
+      		]]></xsd:documentation>
+      	</xsd:annotation>
+      </xsd:element>
+	    <xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
+	  </xsd:sequence>
+	  <xsd:attributeGroup ref="coreSnsComponentAttributes" />
+		<xsd:attributeGroup ref="integration:channelAdapterAttributes" />
+     <xsd:attribute name="order">
+       <xsd:annotation>
+         <xsd:documentation>
+           Specifies the order for invocation when this endpoint is connected as a
+           subscriber to a SubscribableChannel.
+         </xsd:documentation>
+       </xsd:annotation>
+     </xsd:attribute>
+	</xsd:complexType>
+
+  <xsd:attributeGroup name="coreSnsComponentAttributes">
+    <xsd:attribute name="topic-name" use="required" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Name of SNS topic. If this topic does not exist, it will be
+          created.
+          ]]>
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="sns-test-proxy" use="optional" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Reference to com.threepillar.labs.si.sns.support.SnsTestProxy bean;
+          only useful for mock testing.
+          ]]>
+        </xsd:documentation>
+        <xsd:appinfo>
+          <tool:annotation kind="ref">
+            <tool:expected-type type="com.threepillar.labs.si.sns.support.SnsTestProxy"/>
+          </tool:annotation>
+        </xsd:appinfo>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="aws-credentials-provider" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Reference to a com.amazonaws.auth.AWSCredentialsProvider bean, required if 
+          "queue" is not provided.
+          ]]>
+        </xsd:documentation>
+        <xsd:appinfo>
+          <tool:annotation kind="ref">
+            <tool:assignable-to
+              type="com.amazonaws.auth.AWSCredentialsProvider" />
+          </tool:annotation>
+        </xsd:appinfo>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="aws-client-configuration" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Reference to a com.amazonaws.ClientConfiguration bean, required if
+          HTTP/HTTPS connection settings, such as proxy configuration, should be overwritten.
+          ]]>
+        </xsd:documentation>
+        <xsd:appinfo>
+          <tool:annotation kind="ref">
+            <tool:assignable-to
+                type="com.amazonaws.ClientConfiguration" />
+          </tool:annotation>
+        </xsd:appinfo>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="region-id" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          AWS regionId to use, default is us-east-1
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="sns-executor-proxy" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+          Bean referenace to an instance of com.threepillar.labs.si.sns.SnsExecutorProxy which
+          will be auto-created. You can use this bean to query for generated SNS attributes
+          such as topic ARN.
+          ]]>
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="message-marshaller" type="xsd:string">
+    	<xsd:annotation>
+    		<xsd:documentation><![CDATA[
+    		Bean reference to org.springframework.integration.aws.MessageMarshaller
+    		implementation.
+    		]]>
+    		</xsd:documentation>
+    		<xsd:appinfo>
+    			<tool:annotation kind="ref">
+    				<tool:assignable-to type="org.springframework.integration.aws.MessageMarshaller"/>
+    			</tool:annotation>
+    		</xsd:appinfo>
+    	</xsd:annotation>
+    </xsd:attribute>
+  </xsd:attributeGroup>
+
+	<xsd:attributeGroup name="snsInboundAttributes">
+    <xsd:attributeGroup ref="coreSnsComponentAttributes" />
+    <xsd:attribute name="phase" type="xsd:int">
+      <xsd:annotation>
+        <xsd:documentation><![CDATA[
+        Specify start up phase for LifeCycle support.
+        ]]>
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+	</xsd:attributeGroup>
+
+	<xsd:complexType name="httpSubscriptionType">
+		<xsd:attribute name="base-uri" type="xsd:anyURI" use="required">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+				The URL to which the SNS topic will send notifications. Must specify
+				the URL scheme ('http'/'https').
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="request-path" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+				Optional path information. In case of incoming elements like a channel/
+				inbound adapter, a org.springframework.web.HttpRequestHandler is
+				registered at this request path. The path defaults to '/${element-id}.do'.
+				For outgoing elements, the request-path is appended to base-uri and sent
+				to SNS for a subscription request. 
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="sqsSubscriptionType">
+		<xsd:attribute name="queue-id" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<tool:annotation kind="ref">
+						<tool:expected-type type="org.springframework.integration.core.MessageChannel"/>
+					</tool:annotation>
+				</xsd:appinfo>
+				<xsd:documentation><![CDATA[
+				'id' attribute value of an SQS element like a channel or inbound adapter.
+				With this attribute, the permission for the SNS topic to post to the 
+				SQS queue is added automatically. 
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="queue-arn" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+				SQS queue ARN. With this attribute, permission is not automatically added.
+				]]></xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+</xsd:schema>
