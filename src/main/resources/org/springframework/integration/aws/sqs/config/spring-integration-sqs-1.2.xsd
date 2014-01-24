@@ -22,9 +22,9 @@
 	<xsd:element name="inbound-channel-adapter">
 		<xsd:complexType>
 			<xsd:complexContent>
-				<xsd:extension base="integration:outboundChannelAdapterType">
+				<xsd:extension base="channelAdapterType">
 					<xsd:attributeGroup ref="coreSqsComponentAttributes" />
-					<xsd:attributeGroup ref="inboundTypeAttributes"></xsd:attributeGroup>
+					<xsd:attributeGroup ref="inboundTypeAttributes" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -330,9 +330,16 @@
 		</xsd:attribute>
 	</xsd:attributeGroup>
 
-	<xsd:complexType name="sqsOutboundType">
+	<xsd:complexType name="channelAdapterType">
 		<xsd:complexContent>
 			<xsd:extension base="integration:outboundChannelAdapterType">
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="sqsOutboundType">
+		<xsd:complexContent>
+			<xsd:extension base="channelAdapterType">
 				<xsd:attributeGroup ref="coreSqsComponentAttributes" />
 			</xsd:extension>
 		</xsd:complexContent>
