@@ -4,11 +4,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.integration.aws.config.AwsParserUtils;
 import org.springframework.integration.aws.sns.channel.PublishSubscribeSnsChannel;
 import org.springframework.integration.config.xml.AbstractChannelParser;
 import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.w3c.dom.Element;
-
 
 public class SnsPublishSubscribeChannelParser extends AbstractChannelParser {
 
@@ -47,6 +47,9 @@ public class SnsPublishSubscribeChannelParser extends AbstractChannelParser {
 
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(
 				beanDefinitionBuilder, element, "auto-startup");
+
+		AwsParserUtils.registerPermissions(element, snsExecutorBuilder,
+				parserContext);
 
 		return beanDefinitionBuilder;
 	}

@@ -5,11 +5,11 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.integration.aws.config.AwsParserUtils;
 import org.springframework.integration.aws.sns.inbound.SnsInboundChannelAdapter;
 import org.springframework.integration.config.xml.AbstractChannelAdapterParser;
 import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.w3c.dom.Element;
-
 
 /**
  * The Sns Inbound Channel adapter parser
@@ -56,6 +56,9 @@ public class SnsInboundChannelAdapterParser extends
 				snsExecutorBeanName);
 
 		SnsParserUtils.registerExecutorProxy(element, snsExecutorBeanName,
+				parserContext);
+
+		AwsParserUtils.registerPermissions(element, snsExecutorBuilder,
 				parserContext);
 
 		return snsInboundChannelAdapterBuilder.getBeanDefinition();

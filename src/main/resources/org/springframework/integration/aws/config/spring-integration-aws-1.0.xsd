@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.springframework.org/schema/integration/aws"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.springframework.org/schema/integration/aws"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:complexType name="permissionsType">
+		<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+			<xsd:element name="permission">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+					Permission element - each permission is applied only once.
+					Modifying an existing permission will NOT update the existing permission.
+					]]>
+					</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:all>
+						<xsd:element name="aws-accounts">
+							<xsd:annotation>
+								<xsd:documentation><![CDATA[
+								List of AWS accounts to give access.
+								]]>
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+									<xsd:element name="account-id">
+										<xsd:annotation>
+											<xsd:documentation><![CDATA[
+											<account-id>123456</account-id>
+											]]>
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="actions">
+							<xsd:annotation>
+								<xsd:documentation><![CDATA[
+								List of actions to allow.
+								]]>
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+									<xsd:element name="action-name">
+										<xsd:annotation>
+											<xsd:documentation><![CDATA[
+											Names are deciphered by AWS. Refer to
+											AWS documentation for available
+											actions.  
+											]]>
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:all>
+					<xsd:attribute name="label" type="xsd:string" use="required">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+							Unique identifier for a permission. The identifier
+							must be unique to an Amazon resource (queue/topic). 
+							]]>
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

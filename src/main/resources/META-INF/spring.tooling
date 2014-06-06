@@ -1,4 +1,7 @@
 # Tooling related information for the integration Sns & Sqs namespace
+http\://www.springframework.org/schema/integration/aws@name=integration AWS Namespace
+http\://www.springframework.org/schema/integration/aws@prefix=int-aws
+http\://www.springframework.org/schema/integration/aws@icon=org/springframework/integration/aws/config/spring-integration-aws.gif
 http\://www.springframework.org/schema/integration/sns@name=integration Sns Namespace
 http\://www.springframework.org/schema/integration/sns@prefix=int-sns
 http\://www.springframework.org/schema/integration/sns@icon=org/springframework/integration/aws/sns/config/spring-integration-sns.gif

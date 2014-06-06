@@ -1,10 +1,15 @@
 package org.springframework.integration.aws.sns.core;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.Message;
@@ -12,6 +17,7 @@ import org.springframework.integration.MessagingException;
 import org.springframework.integration.aws.JsonMessageMarshaller;
 import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.MessageMarshallerException;
+import org.springframework.integration.aws.Permission;
 import org.springframework.integration.aws.sns.support.SnsTestProxy;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.util.Assert;
@@ -19,8 +25,10 @@ import org.springframework.util.Assert;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.AddPermissionRequest;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
+import com.amazonaws.services.sns.model.GetTopicAttributesResult;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sns.model.SubscribeRequest;
@@ -50,6 +58,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	private Map<String, SqsExecutor> sqsExecutorMap;
 	private ClientConfiguration awsClientConfiguration;
 	private MessageMarshaller messageMarshaller;
+	private Set<Permission> permissions;
 
 	/**
 	 * Verifies and sets the parameters. E.g. initializes the to be used
@@ -79,6 +88,7 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 			}
 			createTopicIfNotExists();
 			processSubscriptions();
+			addPermissions();
 		}
 	}
 
@@ -182,6 +192,33 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		}
 		if (sqsExecutor != null) {
 			sqsExecutor.addSnsPublishPolicy(topicName, topicArn);
+		}
+	}
+
+	private void addPermissions() {
+		GetTopicAttributesResult result = client.getTopicAttributes(topicArn);
+		String policyStr = result.getAttributes().get("Policy");
+		log.debug("Policy:" + policyStr);
+		Set<String> existingLabels = new HashSet<String>();
+		if (policyStr != null && policyStr.isEmpty() == false) {
+			try {
+				JSONObject policyJSON = new JSONObject(policyStr);
+				JSONArray statements = policyJSON.getJSONArray("Statement");
+				for (int i = 0; i < statements.length(); i++) {
+					existingLabels.add(statements.getJSONObject(i).getString(
+							"Sid"));
+				}
+			} catch (JSONException e) {
+				throw new MessagingException(e.getMessage(), e);
+			}
+		}
+		for (Permission p : permissions) {
+			if (existingLabels.contains(p.getLabel()) == false) {
+				client.addPermission(new AddPermissionRequest()
+						.withTopicArn(topicArn).withLabel(p.getLabel())
+						.withAWSAccountIds(p.getAwsAccountIds())
+						.withActionNames(p.getActions()));
+			}
 		}
 	}
 
@@ -292,6 +329,15 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 
 	public void setMessageMarshaller(MessageMarshaller messageMarshaller) {
 		this.messageMarshaller = messageMarshaller;
+	}
+
+	/**
+	 * Sets the permissions to be applied to the SNS topic.
+	 * 
+	 * @param permissions
+	 */
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
 	}
 
 	@Override
