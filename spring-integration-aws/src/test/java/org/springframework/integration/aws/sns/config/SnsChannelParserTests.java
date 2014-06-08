@@ -1,6 +1,9 @@
 package org.springframework.integration.aws.sns.config;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Test;
@@ -17,6 +20,7 @@ import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.test.util.TestUtils;
 
+import com.amazonaws.services.sns.model.Subscription;
 
 @RunWith(JUnit4.class)
 public class SnsChannelParserTests {
@@ -31,18 +35,23 @@ public class SnsChannelParserTests {
 
 		final SnsExecutor snsExecutor = TestUtils.getPropertyValue(
 				this.channel, "snsExecutor", SnsExecutor.class);
-
 		assertNotNull(snsExecutor);
 
 		final String topicNameProperty = TestUtils.getPropertyValue(
 				snsExecutor, "topicName", String.class);
-
 		assertEquals("testTopic", topicNameProperty);
 
 		assertEquals(true, TestUtils.getPropertyValue(channel, "autoStartup",
 				Boolean.class));
 
 		assertTrue(TestUtils.getPropertyValue(channel, "phase", Integer.class) == 0);
+
+		@SuppressWarnings("unchecked")
+		final List<Subscription> subscriptions = TestUtils.getPropertyValue(
+				snsExecutor, "subscriptionList", List.class);
+		assertThat(subscriptions, is(not(empty())));
+		Subscription defS = subscriptions.get(0);
+		assertThat(defS.getEndpoint(), containsString("www.example.com"));
 
 		Object snsExecutorProxy = context.getBean("snsExecutorProxy");
 		assertNotNull(snsExecutorProxy);

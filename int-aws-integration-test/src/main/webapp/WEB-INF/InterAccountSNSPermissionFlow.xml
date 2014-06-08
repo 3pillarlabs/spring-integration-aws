@@ -14,7 +14,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 	<context:annotation-config />
-	<context:property-placeholder location="/target/test-classes/test/integration/InterAccountSNSPermissionFlow.properties" />
+	<context:property-placeholder location="/target/classes/intaws/integration/test/InterAccountSNSPermissionFlow.properties" />
 	<mvc:annotation-driven />
 
 	<bean id="myAccount" class="org.springframework.integration.aws.SimpleAWSCredentialsProvider">
@@ -22,10 +22,44 @@
 		<property name="secretKey" value="${my.aws.secretKey}" />
 	</bean>
 
-	<int-sns:publish-subscribe-channel topic-name="InterAccountSNSPermissionFlow" 
+	<int:channel id="message-source" />
+	
+	<int-sns:outbound-channel-adapter topic-name="InterAccountSNSPermissionFlow" 
+																		aws-credentials-provider="myAccount"
+																		channel="message-source"
+																		id="sns-outbound">
+		<int-sns:permissions>
+			<int-aws:permission label="OtherCanRead">
+				<int-aws:actions>
+					<int-aws:action-name>Receive</int-aws:action-name>
+					<int-aws:action-name>Subscribe</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>203288108635</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+		</int-sns:permissions>																		
+	</int-sns:outbound-channel-adapter>
+
+	<bean id="otherAccount" class="org.springframework.integration.aws.SimpleAWSCredentialsProvider">
+		<property name="accessKey" value="${other.aws.accessKey}" />
+		<property name="secretKey" value="${other.aws.secretKey}" />
+	</bean>
+	
+	<int-sns:inbound-channel-adapter topic-arn="${topic.arn}"
+																	 aws-credentials-provider="otherAccount"
+																	 channel="message-destination"
+																	 phase="1"
+																	 id="sns-inbound">
+		<int-sns:endpoint base-uri="http://labs.3pillarglobal.com:3132" />
+	</int-sns:inbound-channel-adapter>
+	
+	<int:channel id="message-destination" />
+
+	<!-- <int-sns:publish-subscribe-channel topic-name="InterAccountSNSPermissionFlow" 
 																		 id="sns-channel"
 																		 aws-credentials-provider="myAccount">
-		<int-sns:endpoint base-uri="http://labs.3pillarglobal.com:56913" />
+		<int-sns:endpoint base-uri="${reachable.baseUrl}" />
 		<int-sns:permissions>
 			<int-aws:permission label="OtherCanPublish">
 				<int-aws:actions>
@@ -36,6 +70,6 @@
 				</int-aws:aws-accounts>
 			</int-aws:permission>
 		</int-sns:permissions>
-	</int-sns:publish-subscribe-channel>
+	</int-sns:publish-subscribe-channel> -->
 
 </beans>

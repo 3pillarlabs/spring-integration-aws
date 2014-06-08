@@ -58,6 +58,12 @@ public class SnsInboundChannelAdapterParser extends
 		SnsParserUtils.registerExecutorProxy(element, snsExecutorBeanName,
 				parserContext);
 
+		IntegrationNamespaceUtils.setValueIfAttributeDefined(
+				snsInboundChannelAdapterBuilder, element, "phase");
+
+		IntegrationNamespaceUtils.setValueIfAttributeDefined(
+				snsInboundChannelAdapterBuilder, element, "auto-startup");
+
 		AwsParserUtils.registerPermissions(element, snsExecutorBuilder,
 				parserContext);
 

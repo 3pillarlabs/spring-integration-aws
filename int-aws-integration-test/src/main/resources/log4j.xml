@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd" >
+<log4j:configuration>
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %5p %50.50l - %m%n"/>
+		</layout>
+	</appender>
+	
+	<logger name="org.springframework.integration.aws">
+		<level value="DEBUG" />
+	</logger>
+	
+	<logger name="intaws">
+		<level value="DEBUG" />
+	</logger>
+	
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="CONSOLE"/>
+	</root>
+	
+</log4j:configuration>

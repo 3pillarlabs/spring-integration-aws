@@ -79,6 +79,9 @@ public final class SnsParserUtils {
 		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
 				snsExecutorBuilder, element, "message-marshaller");
 
+		IntegrationNamespaceUtils.setValueIfAttributeDefined(
+				snsExecutorBuilder, element, "topic-arn");
+
 		return snsExecutorBuilder;
 
 	}

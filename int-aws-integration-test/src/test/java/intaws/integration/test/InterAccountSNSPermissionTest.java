@@ -1,8 +1,10 @@
-package test.integration;
+package intaws.integration.test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -16,20 +18,36 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 @RunWith(JUnit4.class)
-public class InterAccountSNSPermissionFlow {
+public class InterAccountSNSPermissionTest {
+
+	private Server server;
 
 	@Test
 	public void messagePublishFromOtherAccount() throws Exception {
 
-		Server server = getServer();
+		server = createServer();
 		server.setHandler(getServletContextHandler());
-		server.start();
-		server.join();
-		Thread.sleep(2000);
+
+		ExecutorService webThread = Executors.newSingleThreadExecutor();
+		webThread.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					server.start();
+					server.join();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+
+		Thread.sleep(120000);
 		server.stop();
+		webThread.shutdown();
 	}
 
-	private Server getServer() throws IOException {
+	private Server createServer() throws IOException {
 		Resource propsFile = new ClassPathResource(
 				"InterAccountSNSPermissionFlow.properties", getClass());
 		Properties props = new Properties();
@@ -41,24 +59,17 @@ public class InterAccountSNSPermissionFlow {
 	}
 
 	private ServletContextHandler getServletContextHandler() throws Exception {
-		Resource contextFile = new ClassPathResource(
-				"/WEB-INF/InterAccountSNSPermissionFlow.xml", getClass());
 
 		XmlWebApplicationContext context = new XmlWebApplicationContext();
-		context.setConfigLocation("/target/test-classes/WEB-INF/InterAccountSNSPermissionFlow.xml");
+		context.setConfigLocation("src/main/webapp/WEB-INF/InterAccountSNSPermissionFlow.xml");
 		context.registerShutdownHook();
-		// context.refresh();
 
 		ServletContextHandler contextHandler = new ServletContextHandler();
 		contextHandler.setErrorHandler(null);
 		contextHandler.setResourceBase(".");
-		// contextHandler.setInitParameter("contextConfigLocation",
-		// "/WEB-INF/InterAccountSNSPermissionFlow.xml");
 		ServletHolder servletHolder = new ServletHolder(new DispatcherServlet(
 				context));
-		// servletHolder.setName("InterAccountSNSPermissionFlowServlet");
 		contextHandler.addServlet(servletHolder, "/*");
-		// contextHandler.addEventListener(new ContextLoaderListener(context));
 
 		return contextHandler;
 	}

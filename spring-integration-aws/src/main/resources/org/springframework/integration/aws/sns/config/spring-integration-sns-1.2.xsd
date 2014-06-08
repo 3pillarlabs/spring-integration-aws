@@ -253,11 +253,11 @@
 	</xsd:complexType>
 
 	<xsd:attributeGroup name="coreSnsComponentAttributes">
-		<xsd:attribute name="topic-name" use="required" type="xsd:string">
+		<xsd:attribute name="topic-name" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
           Name of SNS topic. If this topic does not exist, it will be
-          created.
+          created. Either topic-name or topic-arn is required.
           ]]>
 				</xsd:documentation>
 			</xsd:annotation>
@@ -336,6 +336,14 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="topic-arn" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+          ARN of SNS topic (implies topic already exists). Either topic-name or topic-arn is required.
+          ]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:attributeGroup>
 
 	<xsd:attributeGroup name="snsInboundAttributes">
@@ -351,7 +359,7 @@
 	</xsd:attributeGroup>
 
 	<xsd:complexType name="httpSubscriptionType">
-		<xsd:attribute name="base-uri" type="xsd:anyURI" use="required">
+		<xsd:attribute name="base-uri" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
 				The URL to which the SNS topic will send notifications. Must specify

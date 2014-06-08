@@ -66,7 +66,8 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	@Override
 	public void afterPropertiesSet() {
 
-		Assert.hasText(this.topicName, "topicName must not be empty.");
+		Assert.isTrue(this.topicName != null || this.topicArn != null,
+				"Either topicName or topicArn must not be empty.");
 
 		Assert.isTrue(snsTestProxy != null || awsCredentialsProvider != null,
 				"Either snsTestProxy or awsCredentialsProvider needs to be provided");
@@ -86,7 +87,9 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 				client.setEndpoint(String.format("sns.%s.amazonaws.com",
 						regionId));
 			}
-			createTopicIfNotExists();
+			if (topicArn == null) {
+				createTopicIfNotExists();
+			}
 			processSubscriptions();
 			addPermissions();
 		}
@@ -196,28 +199,31 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	private void addPermissions() {
-		GetTopicAttributesResult result = client.getTopicAttributes(topicArn);
-		String policyStr = result.getAttributes().get("Policy");
-		log.debug("Policy:" + policyStr);
-		Set<String> existingLabels = new HashSet<String>();
-		if (policyStr != null && policyStr.isEmpty() == false) {
-			try {
-				JSONObject policyJSON = new JSONObject(policyStr);
-				JSONArray statements = policyJSON.getJSONArray("Statement");
-				for (int i = 0; i < statements.length(); i++) {
-					existingLabels.add(statements.getJSONObject(i).getString(
-							"Sid"));
+		if (permissions != null && permissions.isEmpty() == false) {
+			GetTopicAttributesResult result = client
+					.getTopicAttributes(topicArn);
+			String policyStr = result.getAttributes().get("Policy");
+			log.debug("Policy:" + policyStr);
+			Set<String> existingLabels = new HashSet<String>();
+			if (policyStr != null && policyStr.isEmpty() == false) {
+				try {
+					JSONObject policyJSON = new JSONObject(policyStr);
+					JSONArray statements = policyJSON.getJSONArray("Statement");
+					for (int i = 0; i < statements.length(); i++) {
+						existingLabels.add(statements.getJSONObject(i)
+								.getString("Sid"));
+					}
+				} catch (JSONException e) {
+					throw new MessagingException(e.getMessage(), e);
 				}
-			} catch (JSONException e) {
-				throw new MessagingException(e.getMessage(), e);
 			}
-		}
-		for (Permission p : permissions) {
-			if (existingLabels.contains(p.getLabel()) == false) {
-				client.addPermission(new AddPermissionRequest()
-						.withTopicArn(topicArn).withLabel(p.getLabel())
-						.withAWSAccountIds(p.getAwsAccountIds())
-						.withActionNames(p.getActions()));
+			for (Permission p : permissions) {
+				if (existingLabels.contains(p.getLabel()) == false) {
+					client.addPermission(new AddPermissionRequest()
+							.withTopicArn(topicArn).withLabel(p.getLabel())
+							.withAWSAccountIds(p.getAwsAccountIds())
+							.withActionNames(p.getActions()));
+				}
 			}
 		}
 	}
@@ -265,6 +271,15 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 
 	public String getTopicArn() {
 		return topicArn;
+	}
+
+	/**
+	 * Sets the topic ARN. Must not be empty.
+	 * 
+	 * @param topicArn
+	 */
+	public void setTopicArn(String topicArn) {
+		this.topicArn = topicArn;
 	}
 
 	/**
