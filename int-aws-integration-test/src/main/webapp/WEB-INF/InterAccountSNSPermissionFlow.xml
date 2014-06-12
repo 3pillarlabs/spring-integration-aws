@@ -24,7 +24,7 @@
 
 	<int:channel id="message-source" />
 	
-	<int-sns:outbound-channel-adapter topic-name="InterAccountSNSPermissionFlow" 
+	<int-sns:outbound-channel-adapter topic-name="${topic.name}" 
 																		aws-credentials-provider="myAccount"
 																		channel="message-source"
 																		id="sns-outbound">
@@ -51,25 +51,9 @@
 																	 channel="message-destination"
 																	 phase="1"
 																	 id="sns-inbound">
-		<int-sns:endpoint base-uri="http://labs.3pillarglobal.com:3132" />
+		<int-sns:endpoint base-uri="http://182.68.137.37:3132" />
 	</int-sns:inbound-channel-adapter>
 	
 	<int:channel id="message-destination" />
-
-	<!-- <int-sns:publish-subscribe-channel topic-name="InterAccountSNSPermissionFlow" 
-																		 id="sns-channel"
-																		 aws-credentials-provider="myAccount">
-		<int-sns:endpoint base-uri="${reachable.baseUrl}" />
-		<int-sns:permissions>
-			<int-aws:permission label="OtherCanPublish">
-				<int-aws:actions>
-					<int-aws:action-name>Publish</int-aws:action-name>
-				</int-aws:actions>
-				<int-aws:aws-accounts>
-					<int-aws:account-id>203288108635</int-aws:account-id>
-				</int-aws:aws-accounts>
-			</int-aws:permission>
-		</int-sns:permissions>
-	</int-sns:publish-subscribe-channel> -->
 
 </beans>
