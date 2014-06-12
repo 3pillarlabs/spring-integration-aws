@@ -51,7 +51,7 @@
 																	 channel="message-destination"
 																	 phase="1"
 																	 id="sns-inbound">
-		<int-sns:endpoint base-uri="http://182.68.137.37:3132" />
+		<int-sns:endpoint base-uri="http://labs.3pillarglobal.com" />
 	</int-sns:inbound-channel-adapter>
 	
 	<int:channel id="message-destination" />

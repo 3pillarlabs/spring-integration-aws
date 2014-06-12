@@ -5,9 +5,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -36,12 +36,15 @@ public class InterAccountSNSPermissionTest {
 
 	private Server server;
 	private XmlWebApplicationContext context;
-	private List<String> recdMessages;
+	private Set<String> recdMessages;
 
 	@Test
 	public void messagePublishFromOtherAccount() throws Exception {
 
-		recdMessages = new ArrayList<String>();
+		final String msg1 = "This is the first message";
+		final String msg2 = "This is the second message";
+
+		recdMessages = new HashSet<String>();
 		server = createServer();
 		server.setHandler(getServletContextHandler());
 
@@ -60,7 +63,7 @@ public class InterAccountSNSPermissionTest {
 		});
 
 		// wait for context load
-		Thread.sleep(TimeUnit.MINUTES.toMillis(3));
+		Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 
 		SubscribableChannel destChannel = context.getBean(
 				"message-destination", SubscribableChannel.class);
@@ -79,16 +82,13 @@ public class InterAccountSNSPermissionTest {
 				EventDrivenConsumer.class);
 		MessageChannel srcChannel = TestUtils.getPropertyValue(srcConsumer,
 				"inputChannel", MessageChannel.class);
-		final String msg1 = "This is the first message";
-		final String msg2 = "This is the second message";
 		srcChannel.send(MessageBuilder.withPayload(msg1).build());
 		srcChannel.send(MessageBuilder.withPayload(msg2).build());
 
 		// wait for messages to go out and come back
-		Thread.sleep(TimeUnit.MINUTES.toMillis(4));
+		Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 
-		assertThat(recdMessages, contains(msg1));
-		assertThat(recdMessages, contains(msg2));
+		assertThat(recdMessages, containsInAnyOrder(msg1, msg2));
 
 		server.stop();
 		webThread.shutdown();
