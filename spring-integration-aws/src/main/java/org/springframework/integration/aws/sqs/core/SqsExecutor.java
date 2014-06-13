@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,7 @@ import org.springframework.integration.MessagingException;
 import org.springframework.integration.aws.JsonMessageMarshaller;
 import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.MessageMarshallerException;
+import org.springframework.integration.aws.Permission;
 import org.springframework.integration.aws.sqs.SqsHeaders;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
@@ -84,6 +86,7 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	private MessageMarshaller messageMarshaller;
 
 	private volatile int destroyWaitTime;
+	private Set<Permission> permissions;
 
 	/**
 	 * Constructor.
@@ -101,7 +104,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	 */
 	@Override
 	public void afterPropertiesSet() {
-		Assert.hasText(this.queueName, "queueName must not be empty.");
+
+		Assert.isTrue(this.queueName != null || this.queueArn != null,
+				"Either queueName or queueArn must not be empty.");
+
 		Assert.isTrue(queue != null || awsCredentialsProvider != null,
 				"Either queue or awsCredentialsProvider needs to be provided");
 
@@ -536,6 +542,14 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 	public void setMessageMarshaller(MessageMarshaller messageMarshaller) {
 		this.messageMarshaller = messageMarshaller;
+	}
+
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
+
+	public void setQueueArn(String queueArn) {
+		this.queueArn = queueArn;
 	}
 
 }

@@ -6,13 +6,13 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.integration.aws.config.AwsParserUtils;
 import org.springframework.integration.aws.sqs.inbound.SqsSubscribableChannelAdapter;
 import org.springframework.integration.config.SourcePollingChannelAdapterFactoryBean;
 import org.springframework.integration.config.xml.AbstractChannelAdapterParser;
 import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
-
 
 /**
  * The Sqs Inbound Channel adapter parser
@@ -97,6 +97,9 @@ public class SqsInboundChannelAdapterParser extends
 
 			beanDefinitition = adapterBuilder.getBeanDefinition();
 		}
+
+		AwsParserUtils.registerPermissions(element, sqsExecutorBuilder,
+				parserContext);
 
 		return beanDefinitition;
 	}

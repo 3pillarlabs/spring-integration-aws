@@ -4,12 +4,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.integration.aws.config.AwsParserUtils;
 import org.springframework.integration.aws.sqs.outbound.SqsOutboundGateway;
 import org.springframework.integration.config.xml.AbstractConsumerEndpointParser;
 import org.springframework.integration.config.xml.IntegrationNamespaceUtils;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
-
 
 /**
  * The Parser for Sqs Outbound Gateway.
@@ -59,6 +59,9 @@ public class SqsOutboundGatewayParser extends AbstractConsumerEndpointParser {
 
 		SqsParserUtils.registerExecutorProxy(gatewayElement,
 				sqsExecutorBeanName, parserContext);
+
+		AwsParserUtils.registerPermissions(gatewayElement, sqsExecutorBuilder,
+				parserContext);
 
 		return sqsOutboundGatewayBuilder;
 

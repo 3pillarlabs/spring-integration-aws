@@ -22,7 +22,7 @@ public final class AwsParserUtils {
 	}
 
 	public static void registerPermissions(Element element,
-			BeanDefinitionBuilder snsExecutorBuilder,
+			BeanDefinitionBuilder executorBuilder,
 			ParserContext parserContext) {
 
 		Element permissionsElement = DomUtils.getChildElementByTagName(element,
@@ -67,7 +67,7 @@ public final class AwsParserUtils {
 				}
 			}
 
-			snsExecutorBuilder.addPropertyValue("permissions", permissions);
+			executorBuilder.addPropertyValue("permissions", permissions);
 		}
 	}
 

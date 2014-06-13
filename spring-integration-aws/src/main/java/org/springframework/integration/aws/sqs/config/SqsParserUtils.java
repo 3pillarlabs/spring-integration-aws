@@ -83,6 +83,9 @@ public final class SqsParserUtils {
 		IntegrationNamespaceUtils.setReferenceIfAttributeDefined(
 				sqsExecutorBuilder, element, "message-marshaller");
 
+		IntegrationNamespaceUtils.setValueIfAttributeDefined(
+				sqsExecutorBuilder, element, "queue-arn");
+
 		return sqsExecutorBuilder;
 
 	}

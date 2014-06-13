@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-aws="http://www.springframework.org/schema/integration/aws"
+	xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
+	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.2.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-2.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-1.2.xsd
+		http://www.springframework.org/schema/integration/aws http://www.springframework.org/schema/integration/aws/spring-integration-aws-1.0.xsd">
+
+  <bean id="testQueue" class="org.springframework.integration.aws.support.BlockingQueueFactory" 
+      factory-method="createBlockingQueue" />
+
+	<int-sqs:inbound-channel-adapter queue-name="testQueue" channel="msg-in" queue="testQueue" id="sqs-inbound">
+		<int-sqs:permissions>
+			<int-aws:permission label="label1">
+				<int-aws:actions>
+					<int-aws:action-name>SendMessage</int-aws:action-name>
+					<int-aws:action-name>GetQueueUrl</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>12345</int-aws:account-id>
+					<int-aws:account-id>23456</int-aws:account-id>
+					<int-aws:account-id>34567</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+			<int-aws:permission label="label2">
+				<int-aws:actions>
+					<int-aws:action-name>ReceiveMessage</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>45678</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+		</int-sqs:permissions>
+	</int-sqs:inbound-channel-adapter>
+	
+	<int:channel id="msg-in"></int:channel>
+	<int-stream:stdout-channel-adapter channel="msg-in" />
+
+
+	<int-stream:stdin-channel-adapter channel="msg-source">
+		<int:poller fixed-rate="1000"></int:poller>
+	</int-stream:stdin-channel-adapter>
+	<int:channel id="msg-source" />
+	
+	<int-sqs:outbound-channel-adapter queue-name="testQueue" channel="msg-source" queue="testQueue" id="sqs-outbound">
+		<int-sqs:permissions>
+			<int-aws:permission label="label3">
+				<int-aws:actions>
+					<int-aws:action-name>ReceiveMessage</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>567890</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+		</int-sqs:permissions>
+	</int-sqs:outbound-channel-adapter>		
+	
+	<int-sqs:outbound-gateway queue-arn="somearn" channel="msg-source" queue="testQueue" id="sqs-gateway">
+		<int-sqs:permissions>
+			<int-aws:permission label="label4">
+				<int-aws:actions>
+					<int-aws:action-name>ReceiveMessage</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>567891</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+		</int-sqs:permissions>
+	</int-sqs:outbound-gateway>
+	
+	
+	<int-sqs:channel queue-name="testQueue" id="sqs-channel" queue="testQueue">
+		<int-sqs:permissions>
+			<int-aws:permission label="label5">
+				<int-aws:actions>
+					<int-aws:action-name>ReceiveMessage</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>678912</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+		</int-sqs:permissions>
+	</int-sqs:channel>
+	
+</beans>

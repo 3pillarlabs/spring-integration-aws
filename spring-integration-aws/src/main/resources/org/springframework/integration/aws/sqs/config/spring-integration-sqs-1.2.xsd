@@ -3,6 +3,7 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:tool="http://www.springframework.org/schema/tool"
 	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:int-aws="http://www.springframework.org/schema/integration/aws"
 	targetNamespace="http://www.springframework.org/schema/integration/sqs"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
@@ -11,6 +12,8 @@
 	<xsd:import namespace="http://www.springframework.org/schema/tool" />
 	<xsd:import namespace="http://www.springframework.org/schema/integration"
 		schemaLocation="http://www.springframework.org/schema/integration/spring-integration-2.2.xsd" />
+	<xsd:import namespace="http://www.springframework.org/schema/integration/aws"
+		schemaLocation="http://www.springframework.org/schema/integration/aws/spring-integration-aws-1.0.xsd" />
 
 	<xsd:annotation>
 		<xsd:documentation><![CDATA[
@@ -112,6 +115,16 @@
 								]]></xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
+						<xsd:element name="permissions" type="int-aws:permissionsType" 
+							minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation><![CDATA[
+	          		Optional permissions to control access to the SQS queue.These are applied at startup,
+	          		only once. If a permission is already applied, no changes are made.
+	          		]]>
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
 					</xsd:sequence>
 					<xsd:attributeGroup ref="coreSqsComponentAttributes" />
 					<xsd:attributeGroup ref="inboundTypeAttributes" />
@@ -129,7 +142,7 @@
 	</xsd:element>
 
 	<xsd:attributeGroup name="coreSqsComponentAttributes">
-		<xsd:attribute name="queue-name" use="required" type="xsd:string">
+		<xsd:attribute name="queue-name" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
           Name of SQS queue. If this queue does not exist, it will be
@@ -279,6 +292,14 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="queue-arn" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation><![CDATA[
+          ARN of SQS queue (implies queue already exists). Either queue-name or queue-arn is required.
+          ]]>
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:attributeGroup>
 
 	<xsd:attributeGroup name="inboundTypeAttributes">
@@ -332,7 +353,7 @@
 
 	<xsd:complexType name="channelAdapterType">
 		<xsd:complexContent>
-			<xsd:extension base="integration:outboundChannelAdapterType">
+			<xsd:extension base="outboundChannelAdapterType">
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -343,6 +364,25 @@
 				<xsd:attributeGroup ref="coreSqsComponentAttributes" />
 			</xsd:extension>
 		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="outboundChannelAdapterType">
+		<xsd:all>
+			<xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
+			<xsd:element ref="beans:bean" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="permissions" type="int-aws:permissionsType" minOccurs="0" maxOccurs="1" />
+		</xsd:all>
+		<xsd:attributeGroup ref="integration:channelAdapterAttributes" />
+		<xsd:attribute name="order">
+			<xsd:annotation>
+				<xsd:documentation>
+					Specifies the order for invocation when this endpoint is connected as a
+					subscriber to a channel. This is particularly relevant when that channel
+					is using a "failover" dispatching strategy. It has no effect when this
+					endpoint itself is a Polling Consumer for a channel with a queue.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 </xsd:schema>

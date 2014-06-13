@@ -5,10 +5,10 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.integration.aws.config.AwsParserUtils;
 import org.springframework.integration.aws.sqs.outbound.SqsOutboundGateway;
 import org.springframework.integration.config.xml.AbstractOutboundChannelAdapterParser;
 import org.w3c.dom.Element;
-
 
 /**
  * The parser for the Sqs Outbound Channel Adapter.
@@ -58,6 +58,9 @@ public class SqsOutboundChannelAdapterParser extends
 
 		sqsOutboundChannelAdapterBuilder.addPropertyValue("producesReply",
 				Boolean.FALSE);
+
+		AwsParserUtils.registerPermissions(element, sqsExecutorBuilder,
+				parserContext);
 
 		return sqsOutboundChannelAdapterBuilder.getBeanDefinition();
 
