@@ -4,3 +4,4 @@ target/
 .project
 .springBeans
 InterAccountSNSPermissionFlow.properties
+InterAccountSQSPermissionFlow.properties

@@ -84,7 +84,7 @@ public final class SqsParserUtils {
 				sqsExecutorBuilder, element, "message-marshaller");
 
 		IntegrationNamespaceUtils.setValueIfAttributeDefined(
-				sqsExecutorBuilder, element, "queue-arn");
+				sqsExecutorBuilder, element, "queue-url");
 
 		return sqsExecutorBuilder;
 

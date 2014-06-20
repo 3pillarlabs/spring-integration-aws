@@ -1,5 +1,6 @@
 package org.springframework.integration.aws.sqs.core;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessagingException;
+import org.springframework.integration.aws.AwsUtil;
 import org.springframework.integration.aws.JsonMessageMarshaller;
 import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.MessageMarshallerException;
@@ -40,6 +42,7 @@ import com.amazonaws.auth.policy.conditions.ConditionFactory;
 import com.amazonaws.auth.policy.internal.JsonPolicyWriter;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.AddPermissionRequest;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
@@ -105,8 +108,8 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	@Override
 	public void afterPropertiesSet() {
 
-		Assert.isTrue(this.queueName != null || this.queueArn != null,
-				"Either queueName or queueArn must not be empty.");
+		Assert.isTrue(this.queueName != null || this.queueUrl != null,
+				"Either queueName or queueUrl must not be empty.");
 
 		Assert.isTrue(queue != null || awsCredentialsProvider != null,
 				"Either queue or awsCredentialsProvider needs to be provided");
@@ -128,7 +131,11 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 				sqsClient.setEndpoint(String.format("sqs.%s.amazonaws.com",
 						regionId));
 			}
-			createQueueIfNotExists();
+			if (queueName != null) {
+				createQueueIfNotExists();
+			}
+
+			addPermissions();
 		}
 	}
 
@@ -176,6 +183,27 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		GetQueueAttributesResult result = sqsClient.getQueueAttributes(request
 				.withAttributeNames(Collections.singletonList(QUEUE_ARN_KEY)));
 		queueArn = result.getAttributes().get(QUEUE_ARN_KEY);
+	}
+
+	private void addPermissions() {
+		if (permissions != null && permissions.isEmpty() == false) {
+			GetQueueAttributesResult result = sqsClient
+					.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
+							Arrays.asList("Policy")));
+
+			AwsUtil.addPermissions(result.getAttributes(), permissions,
+					new AwsUtil.AddActionLambda() {
+
+						@Override
+						public void addPermission(Permission p) {
+							sqsClient.addPermission(new AddPermissionRequest()
+									.withQueueUrl(queueUrl)
+									.withLabel(p.getLabel())
+									.withAWSAccountIds(p.getAwsAccountIds())
+									.withActions(p.getActions()));
+						}
+					});
+		}
 	}
 
 	/**
@@ -339,6 +367,9 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 	}
 
 	public String getQueueArn() {
+		if (queueArn == null) {
+			resolveQueueArn();
+		}
 		return queueArn;
 	}
 
@@ -490,6 +521,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 
 	public void addSnsPublishPolicy(String topicName, String topicArn) {
 
+		if (queueArn == null) {
+			resolveQueueArn();
+		}
+
 		String publishPolicyKey = String.format("SNS-%s-SQS-%s", topicName,
 				queueName);
 		String policyId = null;
@@ -548,8 +583,8 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 		this.permissions = permissions;
 	}
 
-	public void setQueueArn(String queueArn) {
-		this.queueArn = queueArn;
+	public void setQueueUrl(String queueUrl) {
+		this.queueUrl = queueUrl;
 	}
 
 }

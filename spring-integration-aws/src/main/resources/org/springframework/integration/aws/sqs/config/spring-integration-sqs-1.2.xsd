@@ -292,10 +292,10 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="queue-arn" type="xsd:string">
+		<xsd:attribute name="queue-url" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
-          ARN of SQS queue (implies queue already exists). Either queue-name or queue-arn is required.
+          URL of SQS queue (implies queue already exists). Either queue-name or queue-arn is required.
           ]]>
 				</xsd:documentation>
 			</xsd:annotation>

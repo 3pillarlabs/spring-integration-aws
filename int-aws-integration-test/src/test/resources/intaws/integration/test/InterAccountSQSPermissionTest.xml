@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-aws="http://www.springframework.org/schema/integration/aws"
+	xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.2.xsd
+		http://www.springframework.org/schema/integration/aws http://www.springframework.org/schema/integration/aws/spring-integration-aws-1.0.xsd
+		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-1.2.xsd">
+
+	<context:property-placeholder location="/intaws/integration/test/InterAccountSQSPermissionFlow.properties" />
+
+	<bean id="myAccount" class="org.springframework.integration.aws.SimpleAWSCredentialsProvider">
+		<property name="accessKey" value="${my.aws.accessKey}" />
+		<property name="secretKey" value="${my.aws.secretKey}" />
+	</bean>
+
+	<bean id="otherAccount" class="org.springframework.integration.aws.SimpleAWSCredentialsProvider">
+		<property name="accessKey" value="${other.aws.accessKey}" />
+		<property name="secretKey" value="${other.aws.secretKey}" />
+	</bean>
+
+	<int:channel id="message-out" />
+	
+	<int-sqs:outbound-channel-adapter id="sqs-out" 
+																		aws-credentials-provider="otherAccount" 
+																		channel="message-out"
+																		queue-url="${queue.url}">
+	
+	</int-sqs:outbound-channel-adapter>
+
+	<int-sqs:inbound-channel-adapter id="sqs-in"
+																	 aws-credentials-provider="myAccount"
+																	 channel="message-in"
+																	 queue-name="${queue.name}">
+	
+		<int-sqs:permissions>
+			<int-aws:permission label="OtherCanSend">
+				<int-aws:actions>
+					<int-aws:action-name>SendMessage</int-aws:action-name>
+				</int-aws:actions>
+				<int-aws:aws-accounts>
+					<int-aws:account-id>203288108635</int-aws:account-id>
+				</int-aws:aws-accounts>
+			</int-aws:permission>
+		</int-sqs:permissions>
+	
+	</int-sqs:inbound-channel-adapter>
+
+	<int:channel id="message-in" />
+
+</beans>

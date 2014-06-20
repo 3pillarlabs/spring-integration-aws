@@ -60,7 +60,7 @@
 		</int-sqs:permissions>
 	</int-sqs:outbound-channel-adapter>		
 	
-	<int-sqs:outbound-gateway queue-arn="somearn" channel="msg-source" queue="testQueue" id="sqs-gateway">
+	<int-sqs:outbound-gateway queue-url="https://sqs.us-east-1.amazonaws.com/123/testQueue" channel="msg-source" queue="testQueue" id="sqs-gateway">
 		<int-sqs:permissions>
 			<int-aws:permission label="label4">
 				<int-aws:actions>
