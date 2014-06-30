@@ -26,8 +26,8 @@
   </bean>
 
   <bean id="awsCredentialsProvider" class="org.springframework.integration.aws.SimpleAWSCredentialsProvider">
-    <property name="accessKey" value="AKIAI7CJO7AS4E3BPOYQ" />
-    <property name="secretKey" value="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" />
+    <property name="accessKey" value="${aws.accessKey}" />
+    <property name="secretKey" value="${aws.secretKey}" />
   </bean>
 
   <!-- SNS Inbound -->

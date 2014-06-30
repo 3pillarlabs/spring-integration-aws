@@ -5,3 +5,5 @@ target/
 .springBeans
 InterAccountSNSPermissionFlow.properties
 InterAccountSQSPermissionFlow.properties
+aws-keys.properties
+
