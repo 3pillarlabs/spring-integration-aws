@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.threepillar.labs</groupId>
-  <artifactId>si-aws-sns-sample</artifactId>
+  <artifactId>int-aws-demo</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
 
-  <name>si-aws-sns-sample</name>
+  <name>int-aws-demo</name>
   <url>http://maven.apache.org</url>
 
   <properties>
