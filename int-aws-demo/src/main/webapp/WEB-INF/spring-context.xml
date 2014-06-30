@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:int="http://www.springframework.org/schema/integration"
+  xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
+  xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-2.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-2.1.xsd
+		http://www.springframework.org/schema/integration/sns https://raw.github.com/3pillarlabs/spring-integration-aws/master/src/main/resources/org/springframework/integration/aws/sns/config/spring-integration-sns-1.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/integration/sqs https://raw.github.com/3pillarlabs/spring-integration-aws/master/src/main/resources/org/springframework/integration/aws/sqs/config/spring-integration-sqs-1.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+  <context:component-scan base-package="com.threepillar.labs.snssample.controller" />
+  <mvc:annotation-driven />
+
+  <bean class="com.threepillar.labs.snssample.websocket.WebSocketListener">
+    <property name="listenAddress" value="0.0.0.0" />
+    <property name="webSocketHost" value="labs.3pillarglobal.com" />
+    <property name="webSocketPort" value="9090" />
+  </bean>
+
+  <bean id="awsCredentialsProvider" class="org.springframework.integration.aws.SimpleAWSCredentialsProvider">
+    <property name="accessKey" value="AKIAI7CJO7AS4E3BPOYQ" />
+    <property name="secretKey" value="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" />
+  </bean>
+
+  <!-- SNS Inbound -->
+  <int-sns:inbound-channel-adapter id="snsInboundAdapter"
+      topic-name="snsInboundTopic"
+      channel="logSnsInbound" 
+      aws-credentials-provider="awsCredentialsProvider" 
+      sns-executor-proxy="snsInboundAdapterProxy">
+    
+    <int-sns:endpoint base-uri="http://labs.3pillarglobal.com/spring-integration-aws-demo" />  
+  </int-sns:inbound-channel-adapter>
+  
+  <int:publish-subscribe-channel id="logSnsInbound" />
+
+  <bean id="snsInboundMessageHandler" 
+      class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" 
+      scope="prototype" />
+  
+  <!-- SNS channel  -->
+  <int-sns:publish-subscribe-channel id="snsChannel" 
+      topic-name="snsChannelTopic"
+      aws-credentials-provider="awsCredentialsProvider">
+  
+  	<int-sns:endpoint base-uri="http://labs.3pillarglobal.com/spring-integration-aws-demo" />
+  </int-sns:publish-subscribe-channel>
+
+  <bean id="snsChannelSubscriberA" 
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler"
+      scope="prototype" />
+  <bean id="snsChannelSubscriberB" 
+      class="com.threepillar.labs.snssample.websocket.SnsChannelMessageHandler"
+      scope="prototype" />
+
+  <!-- SNS outbound -> SQS  -->
+  <int:channel id="logSnsOutbound" />
+  
+  <int-sns:outbound-channel-adapter id="snsOutbound" 
+      topic-name="snsOutboundTopic" 
+      aws-credentials-provider="awsCredentialsProvider"
+      channel="logSnsOutbound">
+    
+    <int-sns:subscriptions>
+    	<int-sns:sqs queue-id="sqsInbound"/>
+    </int-sns:subscriptions>  
+  </int-sns:outbound-channel-adapter>
+
+  <int-sqs:inbound-channel-adapter id="sqsInbound" 
+      queue-name="sqsInboundQueue" 
+      aws-credentials-provider="awsCredentialsProvider"
+      channel="logSqsInbound" />
+      
+  <int:publish-subscribe-channel id="logSqsInbound" />
+  
+  <bean id="snsSqsMessageHandler" 
+      class="com.threepillar.labs.snssample.websocket.SnsSqsMessageHandler"
+      scope="prototype" />
+
+</beans>
