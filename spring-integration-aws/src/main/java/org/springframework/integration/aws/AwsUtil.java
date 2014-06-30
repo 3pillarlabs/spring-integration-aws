@@ -11,13 +11,13 @@ import org.springframework.integration.MessagingException;
 
 public abstract class AwsUtil {
 
-	public abstract static class AddActionLambda {
+	public abstract static class AddPermissionHandler {
 
-		public abstract void addPermission(Permission p);
+		public abstract void execute(Permission p);
 	}
 
 	public static void addPermissions(Map<String, String> attributes,
-			Set<Permission> permissions, AddActionLambda lambda) {
+			Set<Permission> permissions, AddPermissionHandler handler) {
 
 		String policyStr = attributes.get("Policy");
 		Set<String> existingLabels = new HashSet<String>();
@@ -35,7 +35,7 @@ public abstract class AwsUtil {
 		}
 		for (Permission p : permissions) {
 			if (existingLabels.contains(p.getLabel()) == false) {
-				lambda.addPermission(p);
+				handler.execute(p);
 			}
 		}
 

@@ -192,10 +192,10 @@ public class SqsExecutor implements InitializingBean, DisposableBean {
 							Arrays.asList("Policy")));
 
 			AwsUtil.addPermissions(result.getAttributes(), permissions,
-					new AwsUtil.AddActionLambda() {
+					new AwsUtil.AddPermissionHandler() {
 
 						@Override
-						public void addPermission(Permission p) {
+						public void execute(Permission p) {
 							sqsClient.addPermission(new AddPermissionRequest()
 									.withQueueUrl(queueUrl)
 									.withLabel(p.getLabel())

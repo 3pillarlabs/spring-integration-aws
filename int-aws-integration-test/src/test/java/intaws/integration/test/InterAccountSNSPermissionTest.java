@@ -25,9 +25,7 @@ import org.springframework.integration.MessageChannel;
 import org.springframework.integration.MessagingException;
 import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.core.SubscribableChannel;
-import org.springframework.integration.endpoint.EventDrivenConsumer;
 import org.springframework.integration.support.MessageBuilder;
-import org.springframework.integration.test.util.TestUtils;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -78,10 +76,8 @@ public class InterAccountSNSPermissionTest {
 			}
 		});
 
-		EventDrivenConsumer srcConsumer = context.getBean("sns-outbound",
-				EventDrivenConsumer.class);
-		MessageChannel srcChannel = TestUtils.getPropertyValue(srcConsumer,
-				"inputChannel", MessageChannel.class);
+		MessageChannel srcChannel = context.getBean("message-source",
+				MessageChannel.class);
 		srcChannel.send(MessageBuilder.withPayload(msg1).build());
 		srcChannel.send(MessageBuilder.withPayload(msg2).build());
 

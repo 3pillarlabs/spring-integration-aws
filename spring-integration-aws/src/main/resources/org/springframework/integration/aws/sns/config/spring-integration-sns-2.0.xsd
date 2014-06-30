@@ -39,18 +39,16 @@
         		]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:choice>
-					<xsd:element name="permissions" type="int-aws:permissionsType"
-						minOccurs="0" maxOccurs="1">
-						<xsd:annotation>
-							<xsd:documentation><![CDATA[
-          		Optional permissions to control access to the SNS topic.These are applied at startup,
-          		only once. If a permission is already applied, no changes are made.
-          		]]>
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:element>
-				</xsd:choice>
+				<xsd:element name="permissions" type="int-aws:permissionsType"
+					minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[
+         		Optional permissions to control access to the SNS topic.These are applied at startup,
+         		only once. If a permission is already applied, no changes are made.
+         		]]>
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attributeGroup ref="snsInboundAttributes" />
 			<xsd:attributeGroup ref="integration:channelAdapterAttributes" />
@@ -172,18 +170,16 @@
 		            ]]></xsd:documentation>
 							</xsd:annotation>
 						</xsd:element>
-						<xsd:choice>
-							<xsd:element name="permissions" type="int-aws:permissionsType"
-								minOccurs="0" maxOccurs="1">
-								<xsd:annotation>
-									<xsd:documentation><![CDATA[
-		          		Optional permissions to control access to the SNS topic.These are applied at startup,
-		          		only once. If a permission is already applied, no changes are made.
-		          		]]>
-									</xsd:documentation>
-								</xsd:annotation>
-							</xsd:element>
-						</xsd:choice>
+						<xsd:element name="permissions" type="int-aws:permissionsType"
+							minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation><![CDATA[
+	          		Optional permissions to control access to the SNS topic.These are applied at startup,
+	          		only once. If a permission is already applied, no changes are made.
+	          		]]>
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
 					</xsd:sequence>
 					<xsd:attributeGroup ref="snsInboundAttributes" />
 				</xsd:extension>
@@ -226,18 +222,16 @@
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element ref="integration:poller" minOccurs="0" maxOccurs="1" />
-			<xsd:choice>
-				<xsd:element name="permissions" type="int-aws:permissionsType"
-					minOccurs="0" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation><![CDATA[
-	          		Optional permissions to control access to the SNS topic.These are applied at startup,
-	          		only once. If a permission is already applied, no changes are made.
-	          		]]>
-						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-			</xsd:choice>
+			<xsd:element name="permissions" type="int-aws:permissionsType"
+				minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+          		Optional permissions to control access to the SNS topic.These are applied at startup,
+          		only once. If a permission is already applied, no changes are made.
+          		]]>
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 		<xsd:attributeGroup ref="coreSnsComponentAttributes" />
 		<xsd:attributeGroup ref="integration:channelAdapterAttributes" />

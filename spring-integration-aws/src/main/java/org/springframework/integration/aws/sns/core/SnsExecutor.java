@@ -1,19 +1,16 @@
 package org.springframework.integration.aws.sns.core;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.integration.Message;
 import org.springframework.integration.MessagingException;
+import org.springframework.integration.aws.AwsUtil;
 import org.springframework.integration.aws.JsonMessageMarshaller;
 import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.MessageMarshallerException;
@@ -202,29 +199,19 @@ public class SnsExecutor implements InitializingBean, DisposableBean {
 		if (permissions != null && permissions.isEmpty() == false) {
 			GetTopicAttributesResult result = client
 					.getTopicAttributes(topicArn);
-			String policyStr = result.getAttributes().get("Policy");
-			log.debug("Policy:" + policyStr);
-			Set<String> existingLabels = new HashSet<String>();
-			if (policyStr != null && policyStr.isEmpty() == false) {
-				try {
-					JSONObject policyJSON = new JSONObject(policyStr);
-					JSONArray statements = policyJSON.getJSONArray("Statement");
-					for (int i = 0; i < statements.length(); i++) {
-						existingLabels.add(statements.getJSONObject(i)
-								.getString("Sid"));
-					}
-				} catch (JSONException e) {
-					throw new MessagingException(e.getMessage(), e);
-				}
-			}
-			for (Permission p : permissions) {
-				if (existingLabels.contains(p.getLabel()) == false) {
-					client.addPermission(new AddPermissionRequest()
-							.withTopicArn(topicArn).withLabel(p.getLabel())
-							.withAWSAccountIds(p.getAwsAccountIds())
-							.withActionNames(p.getActions()));
-				}
-			}
+
+			AwsUtil.addPermissions(result.getAttributes(), permissions,
+					new AwsUtil.AddPermissionHandler() {
+
+						@Override
+						public void execute(Permission p) {
+							client.addPermission(new AddPermissionRequest()
+									.withTopicArn(topicArn)
+									.withLabel(p.getLabel())
+									.withAWSAccountIds(p.getAwsAccountIds())
+									.withActionNames(p.getActions()));
+						}
+					});
 		}
 	}
 
