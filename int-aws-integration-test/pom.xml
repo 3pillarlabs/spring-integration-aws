@@ -9,9 +9,9 @@
   <url>http://maven.apache.org</url>
   
   <properties>
-    <spring.framework.version>3.1.4.RELEASE</spring.framework.version>
+    <spring.framework.version>3.2.8.RELEASE</spring.framework.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring.integration.version>2.2.6.RELEASE</spring.integration.version>
+    <spring.integration.version>3.0.3.RELEASE</spring.integration.version>
   </properties>
   
   <dependencies>

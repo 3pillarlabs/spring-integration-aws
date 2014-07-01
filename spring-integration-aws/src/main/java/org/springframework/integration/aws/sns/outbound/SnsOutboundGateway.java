@@ -9,7 +9,6 @@ import org.springframework.integration.handler.AbstractReplyProducingMessageHand
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
 
-
 /**
  * 
  * @author Sayantam Dey
@@ -34,8 +33,8 @@ public class SnsOutboundGateway extends AbstractReplyProducingMessageHandler
 	}
 
 	@Override
-	protected void onInit() {
-		super.onInit();
+	protected void doInit() {
+		super.doInit();
 		Assert.notNull(snsExecutor, "'snsExecutor' must not be null");
 
 		log.info(getComponentName() + "[" + this.getClass().getName()

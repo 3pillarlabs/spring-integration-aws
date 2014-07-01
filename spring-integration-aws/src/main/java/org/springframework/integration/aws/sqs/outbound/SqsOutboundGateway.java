@@ -6,7 +6,6 @@ import org.springframework.integration.handler.AbstractReplyProducingMessageHand
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.Assert;
 
-
 /**
  * 
  * @author Sayantam Dey
@@ -29,8 +28,8 @@ public class SqsOutboundGateway extends AbstractReplyProducingMessageHandler {
 	}
 
 	@Override
-	protected void onInit() {
-		super.onInit();
+	protected void doInit() {
+		super.doInit();
 		Assert.notNull(sqsExecutor, "'sqsExecutor' must not be null");
 	}
 

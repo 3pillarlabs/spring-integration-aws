@@ -8,10 +8,10 @@
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans"
-		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
+		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.2.xsd" />
 	<xsd:import namespace="http://www.springframework.org/schema/tool" />
 	<xsd:import namespace="http://www.springframework.org/schema/integration"
-		schemaLocation="http://www.springframework.org/schema/integration/spring-integration-2.2.xsd" />
+		schemaLocation="http://www.springframework.org/schema/integration/spring-integration-3.0.xsd" />
 	<xsd:import namespace="http://www.springframework.org/schema/integration/aws"
 		schemaLocation="http://www.springframework.org/schema/integration/aws/spring-integration-aws-1.0.xsd" />
 
@@ -332,13 +332,6 @@
 					thread,
 					while message dispatcher threads are created as required and managed in
 					a cached thread pool.
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="phase" type="xsd:int">
-			<xsd:annotation>
-				<xsd:documentation>
-					Bean start phase of SmartLifeCycle support.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>

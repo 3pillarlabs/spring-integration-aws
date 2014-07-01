@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -36,6 +37,7 @@ public class InterAccountSNSPermissionTest {
 	private XmlWebApplicationContext context;
 	private Set<String> recdMessages;
 
+	@Ignore
 	@Test
 	public void messagePublishFromOtherAccount() throws Exception {
 
