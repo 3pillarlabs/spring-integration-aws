@@ -3,6 +3,16 @@ Spring Integration AWS
 
 A Java library built on top of the Spring Integration Framework to integrate with Amazon Simple Notification Service (SNS) and Amazon Simple Queue Service (SQS). These services are part of the Amazon Web Services (AWS).
 
+
+New in Release 2.0.0
+--------------------
+
+* Ability to set permissions and policies on SNS topics and SQS queues for collaboration with external systems which share these resources
+* Upgrade to AWS SDK 1.8.2
+* Upgrade to Spring Integration 3.0.3.RELEASE, compatible with Spring Framework 3.2.8.RELEASE
+* Added demo application to main source code
+
+
 Demo
 ----
 
@@ -35,7 +45,7 @@ The project artifacts are available from Maven Central. The dependency informati
     <dependency>
         <groupId>com.3pillarglobal.labs</groupId>
         <artifactId>spring-integration-aws</artifactId>
-        <version>1.1</version>
+        <version>2.0.0</version>
     </dependency>
 
 The GitHub Wiki contains information on configuring the channels and adpaters.
