@@ -16,9 +16,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.aws.Permission;
 import org.springframework.integration.aws.sns.core.SnsExecutor;
 import org.springframework.integration.core.MessageProducer;
-import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.integration.endpoint.EventDrivenConsumer;
 import org.springframework.integration.test.util.TestUtils;
+import org.springframework.messaging.SubscribableChannel;
 
 /**
  * @author Sayantam Dey

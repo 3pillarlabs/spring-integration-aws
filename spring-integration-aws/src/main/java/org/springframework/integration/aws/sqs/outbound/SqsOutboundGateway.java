@@ -1,9 +1,9 @@
 package org.springframework.integration.aws.sqs.outbound;
 
-import org.springframework.integration.Message;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.integration.handler.AbstractReplyProducingMessageHandler;
 import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
 import org.springframework.util.Assert;
 
 /**

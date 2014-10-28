@@ -8,8 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessagingException;
 import org.springframework.integration.aws.AwsUtil;
 import org.springframework.integration.aws.JsonMessageMarshaller;
 import org.springframework.integration.aws.MessageMarshaller;
@@ -17,6 +15,8 @@ import org.springframework.integration.aws.MessageMarshallerException;
 import org.springframework.integration.aws.Permission;
 import org.springframework.integration.aws.sns.support.SnsTestProxy;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessagingException;
 import org.springframework.util.Assert;
 
 import com.amazonaws.ClientConfiguration;

@@ -1,9 +1,9 @@
 package org.springframework.integration.aws.support;
 
-import org.springframework.integration.Message;
 import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.MessageMarshallerException;
 import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
 
 /**
  * Dummy implementation for configuration tests.

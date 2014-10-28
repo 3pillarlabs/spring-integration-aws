@@ -5,9 +5,9 @@
 	xmlns:int-aws="http://www.springframework.org/schema/integration/aws"
 	xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
 	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
-	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd
-		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream-3.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-2.0.xsd
 		http://www.springframework.org/schema/integration/aws http://www.springframework.org/schema/integration/aws/spring-integration-aws-1.0.xsd">
 
