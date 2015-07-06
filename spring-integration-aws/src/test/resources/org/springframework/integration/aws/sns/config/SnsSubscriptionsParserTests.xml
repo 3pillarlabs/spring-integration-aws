@@ -4,9 +4,9 @@
 	xmlns:int-sns="http://www.springframework.org/schema/integration/sns"
 	xmlns:int-sqs="http://www.springframework.org/schema/integration/sqs"
 	xmlns:int="http://www.springframework.org/schema/integration"
-	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-3.0.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
 		http://www.springframework.org/schema/integration/sns http://www.springframework.org/schema/integration/sns/spring-integration-sns-2.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/integration/sqs http://www.springframework.org/schema/integration/sqs/spring-integration-sqs-2.0.xsd">
 
   <bean id="dummyQueue" class="org.springframework.integration.aws.support.BlockingQueueFactory" 
