@@ -7,9 +7,10 @@ import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageHeaders;
+import org.springframework.integration.IntegrationMessageHeaderAccessor;
 import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 
 /**
  * Marshaller implementation for JSON.
@@ -32,8 +33,8 @@ public class JsonMessageMarshaller implements MessageMarshaller {
 			throws MessageMarshallerException {
 
 		try {
-			final Map<String, String> messageProperties = extractMessageProperties(message
-					.getHeaders());
+			final Map<String, String> messageProperties = extractMessageProperties(
+					new IntegrationMessageHeaderAccessor(message));
 			final Map<String, String> headersMap = convertHeadersToMap(message
 					.getHeaders());
 			final Object payload = message.getPayload();
@@ -67,7 +68,7 @@ public class JsonMessageMarshaller implements MessageMarshaller {
 	}
 
 	private Map<String, String> extractMessageProperties(
-			MessageHeaders messageHeaders) {
+			IntegrationMessageHeaderAccessor messageHeaders) {
 
 		Map<String, String> map = new HashMap<String, String>();
 		if (messageHeaders.getCorrelationId() != null) {

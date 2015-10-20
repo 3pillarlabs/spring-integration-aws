@@ -38,8 +38,8 @@
 	</developers>
 
   <properties>
-    <spring.framework.version>3.2.8.RELEASE</spring.framework.version>
-    <spring.integration.version>3.0.3.RELEASE</spring.integration.version>
+    <spring.framework.version>4.0.7.RELEASE</spring.framework.version>
+    <spring.integration.version>4.0.4.RELEASE</spring.integration.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
@@ -79,8 +79,8 @@
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>[2.5,)</version>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

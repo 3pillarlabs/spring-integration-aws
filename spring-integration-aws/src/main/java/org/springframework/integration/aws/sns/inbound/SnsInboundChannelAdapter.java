@@ -2,10 +2,10 @@ package org.springframework.integration.aws.sns.inbound;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.integration.Message;
 import org.springframework.integration.aws.sns.core.NotificationHandler;
 import org.springframework.integration.aws.sns.core.SnsExecutor;
 import org.springframework.integration.endpoint.MessageProducerSupport;
+import org.springframework.messaging.Message;
 import org.springframework.util.Assert;
 
 

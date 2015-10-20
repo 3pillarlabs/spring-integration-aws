@@ -11,9 +11,9 @@ import org.springframework.integration.aws.MessageMarshaller;
 import org.springframework.integration.aws.sqs.core.SqsExecutor;
 import org.springframework.integration.aws.support.TestMessageMarshaller;
 import org.springframework.integration.core.MessageProducer;
-import org.springframework.integration.core.SubscribableChannel;
 import org.springframework.integration.endpoint.EventDrivenConsumer;
 import org.springframework.integration.test.util.TestUtils;
+import org.springframework.messaging.SubscribableChannel;
 
 public class SqsMessageMarshallerTests {
 
