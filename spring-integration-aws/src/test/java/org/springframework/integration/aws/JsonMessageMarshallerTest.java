@@ -9,8 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.integration.IntegrationMessageHeaderAccessor;
 import org.springframework.integration.aws.support.TestPojo;
 import org.springframework.integration.support.MessageBuilder;
 
@@ -59,8 +60,9 @@ public class JsonMessageMarshallerTest {
 		Message<?> received = marshaller.deserialize(original);
 
 		assertEquals(sent.getPayload(), received.getPayload());
-		MessageHeaders sentHeaders = sent.getHeaders();
-		MessageHeaders recvHeaders = received.getHeaders();
+		IntegrationMessageHeaderAccessor sentHeaders = new IntegrationMessageHeaderAccessor(sent);
+        IntegrationMessageHeaderAccessor recvHeaders = new IntegrationMessageHeaderAccessor(received);
+//		MessageHeaders recvHeaders = received.getHeaders();
 		assertEquals(sentHeaders.getCorrelationId(),
 				recvHeaders.getCorrelationId());
 		assertEquals(new Long(expiryTime), recvHeaders.getExpirationDate());
@@ -69,10 +71,10 @@ public class JsonMessageMarshallerTest {
 				recvHeaders.getSequenceNumber());
 		assertEquals(sentHeaders.getSequenceSize(),
 				recvHeaders.getSequenceSize());
-		assertEquals(sentHeaders.get("fubar", String.class),
-				recvHeaders.get("fubar", String.class));
-		assertEquals(pojo, recvHeaders.get("pojo", TestPojo.class));
-		assertTrue(Arrays.deepEquals(ary, (Object[]) recvHeaders.get("ary")));
+		assertEquals(sentHeaders.getHeader("fubar", String.class),
+				recvHeaders.getHeader("fubar", String.class));
+		assertEquals(pojo, recvHeaders.getHeader("pojo", TestPojo.class));
+		assertTrue(Arrays.deepEquals(ary, (Object[]) recvHeaders.getHeader("ary")));
 	}
 
 	@Test

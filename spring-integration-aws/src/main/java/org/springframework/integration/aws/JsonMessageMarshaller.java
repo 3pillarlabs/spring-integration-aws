@@ -7,9 +7,10 @@ import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageHeaders;
-import org.springframework.integration.support.MessageBuilder;
+import org.springframework.integration.IntegrationMessageHeaderAccessor;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 
 /**
  * Marshaller implementation for JSON.
@@ -32,8 +33,7 @@ public class JsonMessageMarshaller implements MessageMarshaller {
 			throws MessageMarshallerException {
 
 		try {
-			final Map<String, String> messageProperties = extractMessageProperties(message
-					.getHeaders());
+			final Map<String, String> messageProperties = extractMessageProperties(new IntegrationMessageHeaderAccessor(message));
 			final Map<String, String> headersMap = convertHeadersToMap(message
 					.getHeaders());
 			final Object payload = message.getPayload();
@@ -67,7 +67,7 @@ public class JsonMessageMarshaller implements MessageMarshaller {
 	}
 
 	private Map<String, String> extractMessageProperties(
-			MessageHeaders messageHeaders) {
+	    IntegrationMessageHeaderAccessor messageHeaders) {
 
 		Map<String, String> map = new HashMap<String, String>();
 		if (messageHeaders.getCorrelationId() != null) {
@@ -184,24 +184,25 @@ public class JsonMessageMarshaller implements MessageMarshaller {
 	private void setProperties(MessageBuilder<Object> builder,
 			JSONObject properties) throws JSONException {
 
+	     
 		if (properties.has(HeaderKeys.CORRELATION_ID)) {
-			builder.setCorrelationId(properties
+			builder.setHeader(IntegrationMessageHeaderAccessor.CORRELATION_ID, properties
 					.getString(HeaderKeys.CORRELATION_ID));
 		}
 		if (properties.has(HeaderKeys.EXPIRATION_DATE)) {
-			builder.setExpirationDate(Long.valueOf(properties
+		    builder.setHeader(IntegrationMessageHeaderAccessor.EXPIRATION_DATE, Long.valueOf(properties
 					.getString(HeaderKeys.EXPIRATION_DATE)));
 		}
 		if (properties.has(HeaderKeys.PRIORITY)) {
-			builder.setPriority(Integer.valueOf(properties
+		    builder.setHeader(IntegrationMessageHeaderAccessor.PRIORITY,  Integer.valueOf(properties
 					.getString(HeaderKeys.PRIORITY)));
 		}
 		if (properties.has(HeaderKeys.SEQUENCE_NUMBER)) {
-			builder.setSequenceNumber(Integer.valueOf(properties
+		    builder.setHeader(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER,Integer.valueOf(properties
 					.getString(HeaderKeys.SEQUENCE_NUMBER)));
 		}
 		if (properties.has(HeaderKeys.SEQUENCE_SIZE)) {
-			builder.setSequenceSize(Integer.valueOf(properties
+		    builder.setHeader(IntegrationMessageHeaderAccessor.SEQUENCE_SIZE,Integer.valueOf(properties
 					.getString(HeaderKeys.SEQUENCE_SIZE)));
 		}
 	}
