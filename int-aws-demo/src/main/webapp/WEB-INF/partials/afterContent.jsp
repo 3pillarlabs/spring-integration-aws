@@ -17,7 +17,7 @@
   <!-- #body-container -->
   <script>
   	jQuery(function($) {
-  		var displayHeight = (window.innerHeight > window.document.body.scrollHeight ? window.innerHeight : window.document.body.scrollHeight); 
+  		var displayHeight = (window.innerHeight > window.document.body.scrollHeight ? window.innerHeight : window.document.body.scrollHeight);
   		$("footer").css("top", displayHeight * 1 - 30);
   		$("footer").removeClass("hide");
   	});

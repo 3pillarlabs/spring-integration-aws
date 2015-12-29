@@ -1,15 +1,15 @@
 <%@include file="WEB-INF/partials/beforeContent.jsp" %>
 <div class="content">
   <div class="post-160 page type-page status-publish hentry" id="post-160">
-    <h1 class="page-title entry-title">Spring Integration AWS</h1>                            
-  </div>          
+    <h1 class="page-title entry-title">Spring Integration AWS</h1>
+  </div>
   <div class="portfolio-large" id="pc-portfolio">
     <div class="one-half">
-      <img class="new-ribbon new-ribbon-173 featured-image featured-image-173 pf-post-image" src="http://labs.3pillarglobal.com/wp-content/uploads/2012/12/bolt-featured.png">
+      <img class="new-ribbon new-ribbon-173 featured-image featured-image-173 pf-post-image" src="http://atg.3pillarglobal.com/wp-content/uploads/2012/12/bolt-featured.png">
     </div>
     <div class="one-half">
       <p class="lead">
-      Demonstrating the capabilities of our Spring Integration AWS project... 
+      Demonstrating the capabilities of our Spring Integration AWS project...
       </p>
       <ul>
         <li><i class="icon-flag"></i> <a href="log-sns-inbound.jsp"><strong>SNS Inbound</strong></a>: receive notifications from a SNS topic</li>

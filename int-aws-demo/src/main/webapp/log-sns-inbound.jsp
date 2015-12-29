@@ -2,8 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="content">
   <div class="post-160 page type-page status-publish hentry" id="post-160">
-    <h1 class="page-title entry-title">SNS Inbound</h1>                            
-  </div>          
+    <h1 class="page-title entry-title">SNS Inbound</h1>
+  </div>
   <div class="portfolio-large" id="pc-portfolio">
   <c:url value="/snsInboundTopic.do" var="snsInboundTopicPath"/>
   <section class="one-half">
@@ -17,16 +17,16 @@
   &lt;!-- SNS Inbound --&gt;
   &lt;int-sns:inbound-channel-adapter id="snsInboundAdapter"
       topic-name="snsInboundTopic"
-      channel="logSnsInbound" 
-      aws-credentials-provider="awsCredentialsProvider" 
+      channel="logSnsInbound"
+      aws-credentials-provider="awsCredentialsProvider"
       sns-executor-proxy="snsInboundAdapterProxy"&gt;
-    
-    &lt;int-sns:endpoint base-uri="http://labs.3pillarglobal.com/spring-integration-aws-demo" /&gt;  
+
+    &lt;int-sns:endpoint base-uri="http://atg.3pillarglobal.com/spring-integration-aws-demo" /&gt;
   &lt;/int-sns:inbound-channel-adapter&gt;
-  
+
   &lt;int:publish-subscribe-channel id="logSnsInbound" /&gt;
 
-  &lt;bean id="snsInboundMessageHandler" 
+  &lt;bean id="snsInboundMessageHandler"
       class="com.threepillar.labs.snssample.websocket.SnsInboundMessageHandler" 
       scope="prototype" /&gt;
     </code></pre>
@@ -50,7 +50,7 @@
   <br class="clear" />
   <script type="text/javascript">
     jQuery(function($) {
-	  if ("WebSocket" in window) {	
+	  if ("WebSocket" in window) {
      	  var serverName = "<%= pageContext.getServletContext().getAttribute("websocket.host") %>";
      	  var serverPort = "<%= pageContext.getServletContext().getAttribute("websocket.port") %>";
      	  var wsURL = "ws://" + serverName + ":" + serverPort + "/snsInboundMessageHandler";
@@ -67,7 +67,7 @@
         	  $("#postToSNS").attr("disabled", true);
         	  $("label[for=clientMessage]").prepend('<div class="alert"><strong>Connection Lost</strong>: please refresh page</div>');
           };
-      
+
           $("#postToSNS").click(function() {
               var inputArea = $("#clientMessage");
               var message = inputArea.attr("value");
@@ -94,4 +94,3 @@
   </div>
 </div>
 <%@include file="WEB-INF/partials/afterContent.jsp" %>
-  

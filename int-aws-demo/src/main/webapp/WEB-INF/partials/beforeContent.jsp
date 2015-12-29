@@ -20,45 +20,45 @@
 
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel='stylesheet' id='fancybox-stylesheet-css'
-  href='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.fancybox-1.3.4.css?ver=3.5'
+  href='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.fancybox-1.3.4.css?ver=3.5'
   type='text/css' media='all' />
 <link rel='stylesheet' id='color-scheme-stylesheet-css' href='css/brown.css?ver=3.5' type='text/css' media='all' />
 <link rel='stylesheet' id='Droid+Sans:400,700-css'
   href='http://fonts.googleapis.com/css?family=Droid+Sans%3A400%2C700&#038;ver=3.5'
   type='text/css' media='all' />
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">  
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-includes/js/comment-reply.min.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-includes/js/comment-reply.min.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-includes/js/jquery/jquery.js?ver=1.8.3'></script>
+  src='http://atg.3pillarglobal.com/wp-includes/js/jquery/jquery.js?ver=1.8.3'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/html5/modernizr/modernizr.custom.97935.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/html5/modernizr/modernizr.custom.97935.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/html5/modernizr/pc_modernizr_custom.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/html5/modernizr/pc_modernizr_custom.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/misc/superfish-1.4.8/js/superfish.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/misc/superfish-1.4.8/js/superfish.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/includes/js/pc_superfish_init.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/includes/js/pc_superfish_init.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.fancybox-1.3.4.pack.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.fancybox-1.3.4.pack.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/presscoders/custom-fancybox.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/presscoders/custom-fancybox.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.easing-1.3.pack.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.easing-1.3.pack.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.mousewheel-3.0.4.pack.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/lightboxes/fancybox-1.3.4/jquery.mousewheel-3.0.4.pack.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/sliders/flexslider/jquery.flexslider2.1beta.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/sliders/flexslider/jquery.flexslider2.1beta.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/misc/jquery.quicksand.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/misc/jquery.quicksand.js?ver=3.5'></script>
 <script type='text/javascript'
-  src='http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/presscoders/custom-quicksand.js?ver=3.5'></script>
+  src='http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/api/js/presscoders/custom-quicksand.js?ver=3.5'></script>
 <link rel='prev' title='Frameworks'
-  href='http://labs.3pillarglobal.com/frameworks/' />
+  href='http://atg.3pillarglobal.com/frameworks/' />
 <script src="js/bootstrap.min.js"></script>
-<link rel='canonical' href='http://labs.3pillarglobal.com/apps/' />
+<link rel='canonical' href='http://atg.3pillarglobal.com/apps/' />
 <link rel="shortcut icon"
-  href="http://labs.3pillarglobal.com/wp-content/uploads/2012/12/favicon.ico" />
+  href="http://atg.3pillarglobal.com/wp-content/uploads/2012/12/favicon.ico" />
 <style type="text/css" id="custom-background-css">
 body.custom-background {
 	background-color: #ffffff;
@@ -67,7 +67,7 @@ body.custom-background {
 <!--[if IE 8]>
 <style type="text/css">
 .comment-body, li.pingback, .quote, .avatar, .defaultbtn, .button, .btn, #searchsubmit, #submit, .submit, .post-edit-link, .more-link, input[type="submit"], input[type="text"], textarea, ol.flex-control-nav li a, ol.flex-control-nav li a.active, .flex-direction-nav li a, .post-date, nav.secondary-menu, nav ul ul {
-behavior: url(http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/includes/js/PIE.htc);
+behavior: url(http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/includes/js/PIE.htc);
 }
 </style>
 <![endif]-->
@@ -96,7 +96,7 @@ h1,h2,h3,h4 {
         <div id="logo-wrap">
           <div id="site-logo">
             <a href="http://labs.3pillarglobal.com"><img
-              src="http://labs.3pillarglobal.com/wp-content/uploads/2012/12/tpg-labs-logo.jpg" /></a>
+              src="http://atg.3pillarglobal.com/wp-content/uploads/2012/12/tpg-labs-logo.jpg" /></a>
           </div>
 
         </div>
@@ -108,11 +108,11 @@ h1,h2,h3,h4 {
             class="widget pc_info_widget">
             <a href="http://www.facebook.com/3PillarGlobal"
               target="_blank" class="sm-icon"><img
-              src="http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/images/facebook.png"
+              src="http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/images/facebook.png"
               width="32" height="32" alt="Facebook" /></a><a
               href="http://twitter.com/3PillarGlobal" target="_blank"
               class="sm-icon"><img
-              src="http://labs.3pillarglobal.com/wp-content/themes/designfolio-pro/images/twitter.png"
+              src="http://atg.3pillarglobal.com/wp-content/themes/designfolio-pro/images/twitter.png"
               width="32" height="32" alt="Twitter" /></a>
           </div>
         </div>
@@ -154,8 +154,8 @@ h1,h2,h3,h4 {
         <div id="webSocketAlert" class="alert alert-error alert-block hide">
           <h4>No WebSocket!</h4>
           Looks like the WebSocket API is not available in your browser. Please use a compatible browser
-          like <strong>Safari</strong>, <strong>Firefox</strong> or <strong>Chrome</strong> to view these demos. 
-        </div>                
+          like <strong>Safari</strong>, <strong>Firefox</strong> or <strong>Chrome</strong> to view these demos.
+        </div>
         <script>
           jQuery(function($) {
             if (!("WebSocket" in window)) {
@@ -163,4 +163,3 @@ h1,h2,h3,h4 {
             }
           });
         </script>
-      
